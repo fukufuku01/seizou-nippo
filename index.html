@@ -181,9 +181,12 @@ function ghLoad() {
     if (!Array.isArray(files)) return [];
     var jsonFiles = files.filter(function(f){ return f.name.endsWith(".json"); });
     return Promise.all(jsonFiles.map(function(f) {
-      return fetch(f.download_url, { headers:{ "Authorization":"token " + getToken() } })
-        .then(function(r){ return r.json(); })
-        .catch(function(){ return null; });
+      return ghRequest(
+        "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/reports/" + f.name + "?ref=" + GH_BRANCH
+      ).then(function(data) {
+        var decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+        return JSON.parse(decoded);
+      }).catch(function(){ return null; });
     })).then(function(records) {
       return records.filter(Boolean).sort(function(a,b){
         return (b.date||"").localeCompare(a.date||"");
