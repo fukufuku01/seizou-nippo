@@ -1,0 +1,29 @@
+{
+  "id": "1776843427902_14",
+  "savedAt": "2026-04-22T07:37:07.902Z",
+  "date": "2026-01-28",
+  "author": "養父",
+  "batch1": {
+    "name": "とりめし大",
+    "qty": "823",
+    "start": "09:10",
+    "end": "15:14",
+    "notes": "なし"
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": ""
+}
