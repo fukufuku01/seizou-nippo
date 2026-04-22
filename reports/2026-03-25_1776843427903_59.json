@@ -1,0 +1,29 @@
+{
+  "id": "1776843427903_59",
+  "savedAt": "2026-04-22T07:37:07.903Z",
+  "date": "2026-03-25",
+  "author": "養父",
+  "batch1": {
+    "name": "野菜カレーDEF",
+    "qty": "2106",
+    "start": "09:00",
+    "end": "17:10",
+    "notes": "昨日より具入れが早かった"
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "野菜カレーGH",
+  "otherNotes": ""
+}
