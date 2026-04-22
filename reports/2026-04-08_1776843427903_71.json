@@ -1,0 +1,29 @@
+{
+  "id": "1776843427903_71",
+  "savedAt": "2026-04-22T07:37:07.903Z",
+  "date": "2026-04-08",
+  "author": "日高",
+  "batch1": {
+    "name": "モンシェリー(ウマ)",
+    "qty": "860",
+    "start": "09:00",
+    "end": "13:40",
+    "notes": ""
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": ""
+}
