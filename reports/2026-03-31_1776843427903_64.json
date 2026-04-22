@@ -1,0 +1,29 @@
+{
+  "id": "1776843427903_64",
+  "savedAt": "2026-04-22T07:37:07.903Z",
+  "date": "2026-03-31",
+  "author": "養父",
+  "batch1": {
+    "name": "モンシェリトリ",
+    "qty": "1290",
+    "start": "09:00",
+    "end": "14:30",
+    "notes": "とくになし"
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": ""
+}
