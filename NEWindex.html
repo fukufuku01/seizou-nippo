@@ -4,712 +4,836 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>製造日報システム</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Hiragino Mincho ProN','Yu Mincho',Georgia,serif; background: #F5EDD6; }
-  input, textarea, select, button { font-family: inherit; }
-  @media print {
-    .no-print { display: none !important; }
-    body { background: #fff; }
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Mincho ProN','Yu Mincho',Georgia,serif; background: #F5EDD6; }
+input,textarea,select,button { font-family: inherit; }
+@media print { .no-print { display:none!important; } body { background:#fff; } }
+.tab-bar { display:flex; align-items:center; background:#1A1208; padding:0 16px; gap:4px; position:sticky; top:0; z-index:100; }
+.tab-logo { color:#d8c89a; font-size:13px; font-weight:700; margin-right:auto; padding:12px 0; }
+.tab-btn { padding:12px 16px; background:transparent; border:none; border-bottom:3px solid transparent; color:#8B6A3E; cursor:pointer; font-size:13px; font-family:inherit; }
+.tab-btn.active { color:#F5EDD6; border-bottom:3px solid #D4622A; }
+.tab-logout { padding:8px 12px; background:transparent; border:1px solid #8B6A3E; color:#8B6A3E; cursor:pointer; font-size:11px; border-radius:3px; font-family:inherit; }
+.msg-ok { padding:9px 14px; border-radius:4px; border:1.5px solid #81c784; font-size:13px; margin-bottom:12px; background:#e8f5e9; color:#2e7d32; font-weight:700; line-height:1.5; }
+.msg-err { padding:9px 14px; border-radius:4px; border:1.5px solid #e57373; font-size:13px; margin-bottom:12px; background:#fdecea; color:#c62828; font-weight:700; line-height:1.5; }
+/* 入力フォーム */
+.i-root { min-height:calc(100vh - 44px); background:#F5EDD6; padding-bottom:48px; }
+.i-container { max-width:680px; margin:0 auto; padding:0 16px; }
+.i-header { display:flex; align-items:center; gap:12px; padding:22px 0 14px; border-bottom:2px solid #1A1208; margin-bottom:18px; }
+.i-accent { width:6px; height:46px; background:#D4622A; border-radius:2px; flex-shrink:0; }
+.i-header-label { font-size:10px; letter-spacing:.25em; color:#8B6A3E; text-transform:uppercase; margin-bottom:2px; }
+.i-title { margin:0; font-size:20px; font-weight:700; color:#1A1208; }
+.i-meta-row { display:flex; gap:16px; margin-bottom:8px; }
+.i-field { margin-bottom:12px; }
+.i-field label { display:block; font-size:11px; color:#8B6A3E; letter-spacing:.08em; margin-bottom:4px; }
+.i-input { width:100%; padding:8px 10px; border:1px solid #c8b47a; border-radius:3px; background:#fffef8; font-size:14px; color:#1A1208; outline:none; }
+.i-textarea { min-height:64px; resize:vertical; line-height:1.6; }
+.i-card { background:#fffdf5; border:1px solid #d8c89a; border-left:4px solid #8B6A3E; border-radius:4px; padding:14px 18px; margin-bottom:12px; box-shadow:2px 2px 0 #d8c89a; }
+.i-card-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.i-batch-badge { color:#fff; font-size:12px; font-weight:700; padding:3px 12px; border-radius:2px; }
+.i-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+.i-shead { color:#D4622A; font-size:14px; }
+.i-shead-title { font-size:14px; font-weight:700; color:#1A1208; }
+.i-submit-btn { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; padding:13px 0; background:#1A1208; color:#F5EDD6; border:none; border-radius:3px; cursor:pointer; }
+.i-submit-text { font-size:15px; font-weight:700; }
+.i-submit-arrow { font-size:18px; color:#D4622A; }
+.i-preview-meta { display:flex; gap:16px; flex-wrap:wrap; font-size:14px; color:#1A1208; background:#fffdf5; border:1px solid #d8c89a; border-radius:3px; padding:10px 14px; margin-bottom:12px; }
+.i-pv-table { width:100%; border-collapse:collapse; font-size:14px; }
+.i-pv-td-label { padding:4px 10px 4px 0; color:#8B6A3E; font-weight:700; font-size:12px; width:100px; vertical-align:top; }
+.i-pv-td-val { padding:4px 0; color:#1A1208; line-height:1.6; white-space:pre-wrap; }
+.i-pv-text { margin:0; font-size:14px; color:#1A1208; line-height:1.7; white-space:pre-wrap; }
+.i-save-box { background:#1A1208; border-radius:4px; padding:16px; margin-bottom:12px; }
+.i-save-btn { display:block; width:100%; padding:13px 0; background:#1E5631; color:#fff; border:none; border-radius:3px; cursor:pointer; font-size:14px; font-weight:700; }
+.i-back-btn { flex:1; padding:11px 0; background:transparent; color:#1A1208; border:2px solid #1A1208; border-radius:3px; cursor:pointer; font-size:13px; font-family:inherit; }
+.i-print-btn { flex:1; padding:11px 0; background:#D4622A; color:#fff; border:none; border-radius:3px; cursor:pointer; font-size:13px; font-weight:700; font-family:inherit; }
+.i-new-btn { display:block; width:100%; padding:11px 0; background:transparent; color:#8B6A3E; border:1.5px dashed #8B6A3E; border-radius:3px; cursor:pointer; font-size:13px; font-family:inherit; text-align:center; }
+.i-icon-btn { padding:6px 12px; background:#fffdf5; border:1.5px solid #c8b47a; border-radius:3px; cursor:pointer; font-size:12px; color:#1A1208; font-family:inherit; }
+/* 管理画面 */
+.m-root { display:flex; min-height:calc(100vh - 44px); font-family:'Helvetica Neue',Arial,sans-serif; background:#EEF4FB; }
+.m-sidebar { width:200px; flex-shrink:0; background:#0D1B2A; display:flex; flex-direction:column; padding:20px 0 24px; gap:20px; }
+.m-sidebar-title { color:#a8c4e0; font-size:11px; letter-spacing:.2em; text-transform:uppercase; padding:0 16px; }
+.m-stat-box { background:#1e3a5f; border-radius:6px; padding:10px 12px; }
+.m-stat-val { font-size:22px; font-weight:700; color:#fff; }
+.m-stat-label { font-size:10px; color:#5B7A99; letter-spacing:.1em; text-transform:uppercase; }
+.m-side-btn { display:flex; align-items:center; gap:8px; padding:9px 10px; background:transparent; border:none; color:#a8c4e0; cursor:pointer; font-size:12px; font-family:inherit; border-radius:4px; text-align:left; width:100%; }
+.m-side-btn:hover { background:#1e3a5f; }
+.m-main { flex:1; overflow:auto; }
+.m-topbar { display:flex; align-items:center; gap:12px; padding:16px 20px 12px; border-bottom:1px solid #C5D5E8; background:#fff; }
+.m-page-title { margin:0; font-size:17px; font-weight:700; color:#0D1B2A; }
+.m-loading-tag { font-size:12px; color:#5B7A99; background:#EEF4FB; padding:3px 10px; border-radius:12px; }
+.m-filter-row { display:flex; gap:8px; padding:10px 20px; background:#fff; border-bottom:1px solid #C5D5E8; flex-wrap:wrap; }
+.m-search { flex:2; min-width:140px; padding:7px 10px; border:1px solid #C5D5E8; border-radius:4px; font-size:13px; outline:none; }
+.m-select { flex:1; min-width:90px; padding:7px 8px; border:1px solid #C5D5E8; border-radius:4px; font-size:12px; background:#fff; outline:none; }
+.m-table-wrap { padding:14px 20px; overflow-x:auto; }
+.m-table { width:100%; border-collapse:collapse; font-size:13px; }
+.m-th { padding:9px 10px; color:#fff; font-weight:700; text-align:left; font-size:11px; white-space:nowrap; }
+.m-td { padding:9px 10px; border-bottom:1px solid #C5D5E8; vertical-align:top; }
+.m-td-clamp { padding:9px 10px; border-bottom:1px solid #C5D5E8; vertical-align:top; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; color:#5B7A99; }
+.m-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; }
+.m-small { font-size:11px; color:#5B7A99; }
+.m-view-btn { padding:3px 8px; background:#1E3A5F; color:#fff; border:none; border-radius:3px; cursor:pointer; font-size:11px; margin-right:4px; }
+.m-del-btn { padding:3px 8px; background:#c62828; color:#fff; border:none; border-radius:3px; cursor:pointer; font-size:11px; }
+.m-empty { padding:60px 20px; text-align:center; color:#5B7A99; font-size:14px; font-family:sans-serif; }
+.m-detail-bar { display:flex; align-items:center; gap:10px; padding:12px 20px; background:#fff; border-bottom:1px solid #C5D5E8; position:sticky; top:44px; z-index:10; }
+.m-bar-btn { padding:6px 12px; background:transparent; border:1.5px solid #1E3A5F; border-radius:3px; cursor:pointer; font-size:12px; color:#1E3A5F; font-family:inherit; }
+.m-print-btn { padding:6px 12px; background:#1E3A5F; color:#fff; border:none; border-radius:3px; cursor:pointer; font-size:12px; margin-left:auto; font-family:inherit; }
+.m-del-btn-sm { padding:6px 12px; background:#fdecea; border:1px solid #e57373; border-radius:3px; cursor:pointer; font-size:12px; color:#c62828; font-family:inherit; }
+.m-detail-body { max-width:700px; margin:0 auto; padding:20px 16px; }
+.m-dmeta { display:flex; gap:16px; flex-wrap:wrap; font-size:14px; background:#fff; border:1px solid #C5D5E8; border-radius:4px; padding:10px 14px; margin-bottom:14px; }
+.m-dcard { background:#fff; border:1px solid #C5D5E8; border-radius:4px; padding:14px 18px; margin-bottom:12px; }
+/* モーダル */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:200; }
+.modal-box { background:#fff; border-radius:8px; padding:28px; width:100%; max-width:480px; margin:0 16px; box-shadow:0 8px 32px rgba(0,0,0,.2); }
+.modal-title { margin:0 0 6px; font-size:18px; color:#0D1B2A; font-family:sans-serif; }
+.modal-desc { font-size:13px; color:#5B7A99; margin-bottom:20px; line-height:1.7; font-family:sans-serif; }
+.modal-info { background:#EEF4FB; border:1px solid #C5D5E8; border-radius:4px; padding:12px 14px; font-size:12px; color:#5B7A99; margin-bottom:16px; line-height:1.8; font-family:sans-serif; }
+.modal-drop { border:2px dashed #C5D5E8; border-radius:6px; padding:24px 0; text-align:center; margin-bottom:16px; background:#EEF4FB; }
+.modal-drop-icon { font-size:32px; margin-bottom:8px; }
+.modal-drop-text { font-size:13px; color:#5B7A99; margin-bottom:12px; font-family:sans-serif; }
+.modal-file-label { padding:9px 20px; background:#1E3A5F; color:#fff; border-radius:4px; cursor:pointer; font-size:13px; font-weight:700; font-family:sans-serif; }
+.modal-btns { display:flex; gap:10px; }
+.modal-cancel-btn { flex:1; padding:10px 0; background:transparent; border:1.5px solid #C5D5E8; border-radius:4px; cursor:pointer; font-size:13px; color:#5B7A99; font-family:inherit; }
+.modal-tmpl-btn { flex:1; padding:10px 0; background:#1b5e20; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:13px; font-weight:700; font-family:inherit; }
+/* ログイン */
+.login-root { min-height:100vh; background:#F5EDD6; display:flex; align-items:center; justify-content:center; }
+.login-box { width:100%; max-width:440px; padding:0 16px; }
+.login-icon { font-size:48px; margin-bottom:8px; text-align:center; }
+.login-title { font-size:22px; color:#1A1208; font-weight:700; text-align:center; margin-bottom:6px; }
+.login-desc { color:#8B6A3E; font-size:13px; text-align:center; margin-bottom:28px; }
+.login-card { background:#fffdf5; border:1px solid #d8c89a; border-radius:6px; padding:24px; box-shadow:2px 2px 0 #d8c89a; }
+.login-repo-info { background:#e8f0fe; border:1px solid #90b4f5; border-radius:4px; padding:10px 14px; font-size:12px; color:#1a3a6e; line-height:1.8; margin-bottom:16px; }
+.login-label { display:block; font-size:11px; color:#8B6A3E; letter-spacing:.08em; margin-bottom:6px; }
+.login-input { width:100%; padding:10px 12px; border:1px solid #c8b47a; border-radius:4px; font-size:14px; outline:none; margin-bottom:14px; background:#fffef8; font-family:inherit; }
+.login-btn { width:100%; padding:13px 0; background:#1A1208; color:#F5EDD6; border:none; border-radius:4px; cursor:pointer; font-size:15px; font-weight:700; font-family:inherit; }
+.login-guide { margin-top:14px; padding:10px 14px; background:#f0f7f0; border:1px solid #a5d6a7; border-radius:4px; font-size:11px; color:#1b5e20; line-height:1.9; }
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useMemo } = React;
-
+<div id="app"></div>
+<script>
 // ─── GitHub設定 ───────────────────────────────────────────────
-const GH_OWNER  = "fukufuku01";
-const GH_REPO   = "seizou-nippo";   // ★変更済み
-const GH_BRANCH = "main";
-// ─────────────────────────────────────────────────────────────
+var GH_OWNER  = "fukufuku01";
+var GH_REPO   = "seizou-nippo";
+var GH_BRANCH = "main";
 
-const BATCH_LABELS = ["１釜目","２釜目","３釜目"];
-const BATCH_KEYS   = ["batch1","batch2","batch3"];
-const BATCH_COLORS = ["#C0392B","#1F618D","#1E8449"];
-const initialBatch = { name:"", qty:"", start:"", end:"", notes:"" };
-const initialForm  = {
-  author:"", date:"",
-  batch1:{...initialBatch}, batch2:{...initialBatch}, batch3:{...initialBatch},
-  semiProduct:"", otherNotes:""
-};
-
-const A_ACCENT="#D4622A", A_DARK="#1A1208", A_WARM="#F5EDD6", A_MID="#8B6A3E";
-const M_ACCENT="#1E3A5F", M_LIGHT="#EEF4FB", M_DARK="#0D1B2A", M_MID="#5B7A99", M_BORDER="#C5D5E8";
-
-// ─── GitHub API ───────────────────────────────────────────────
-function getToken() { return localStorage.getItem("gh_token") || ""; }
-
-function toBase64(str) {
-  const bytes = new TextEncoder().encode(str);
-  let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b));
-  return btoa(bin);
-}
-
-async function ghRequest(url, method="GET", body=null) {
-  const token = getToken();
-  const opts = {
-    method,
-    headers: {
-      "Authorization": `token ${token}`,
-      "Accept": "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    }
-  };
-  if (body) { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
-  const res = await fetch(url, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    let msg = data.message || res.statusText;
-    if (res.status===401) msg = "Token認証失敗(401)：Tokenを確認してください";
-    if (res.status===403) msg = "権限不足(403)：TokenのContents権限をRead and writeにしてください";
-    if (res.status===404) msg = "リポジトリが見つかりません(404)：リポジトリ名を確認してください";
-    throw new Error(msg);
-  }
-  return data;
-}
-
-async function ghTestConnection() {
-  return await ghRequest(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}`);
-}
-
-async function ghLoadRecords() {
-  try {
-    const files = await ghRequest(
-      `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/reports?ref=${GH_BRANCH}`
-    );
-    if (!Array.isArray(files)) return [];
-    const jsonFiles = files.filter(f => f.name.endsWith(".json"));
-    const records = await Promise.all(jsonFiles.map(async f => {
-      try {
-        const res = await fetch(f.download_url, { headers:{ "Authorization":`token ${getToken()}` } });
-        return await res.json();
-      } catch { return null; }
-    }));
-    return records.filter(Boolean).sort((a,b) => (b.date||"").localeCompare(a.date||""));
-  } catch(e) {
-    if (e.message.includes("404")) return [];
-    throw e;
-  }
-}
-
-async function ghSaveRecord(record) {
-  const date = record.date || new Date().toISOString().slice(0,10);
-  const path = `reports/${date}_${record.id}.json`;
-  const url  = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
-  const content = toBase64(JSON.stringify(record, null, 2));
-  let sha;
-  try { const ex = await ghRequest(url); sha = ex.sha; } catch(e) { if (!e.message.includes("404")) throw e; }
-  return await ghRequest(url, "PUT", {
-    message: `日報: ${date} (${record.author||"不明"})`,
-    content, branch: GH_BRANCH,
-    ...(sha ? { sha } : {})
-  });
-}
-
-async function ghDeleteRecord(record) {
-  const date = record.date || "unknown";
-  const path = `reports/${date}_${record.id}.json`;
-  const url  = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
-  const { sha } = await ghRequest(url);
-  return await ghRequest(url, "DELETE", {
-    message: `日報削除: ${date}`, sha, branch: GH_BRANCH
-  });
-}
-
-// ─── CSV ──────────────────────────────────────────────────────
-const CSV_HEADERS = ["製造日","記入者","保存日時",
+var BATCH_LABELS = ["１釜目","２釜目","３釜目"];
+var BATCH_KEYS   = ["batch1","batch2","batch3"];
+var BATCH_COLORS = ["#C0392B","#1F618D","#1E8449"];
+var CSV_HEADERS  = ["製造日","記入者","保存日時",
   "１釜目_品名","１釜目_製造数","１釜目_開始","１釜目_終了","１釜目_備考",
   "２釜目_品名","２釜目_製造数","２釜目_開始","２釜目_終了","２釜目_備考",
   "３釜目_品名","３釜目_製造数","３釜目_開始","３釜目_終了","３釜目_備考",
   "半製品","その他"];
 
-function toCSV(records) {
-  const rows = records.map(r => [
-    r.date, r.author, r.savedAt,
-    ...BATCH_KEYS.flatMap(k => [r[k]?.name, r[k]?.qty, r[k]?.start, r[k]?.end, r[k]?.notes]),
-    r.semiProduct, r.otherNotes
-  ].map(v => `"${(v||"").replace(/"/g,'""')}"`));
-  return "\uFEFF" + [CSV_HEADERS,...rows].map(r => r.join(",")).join("\n");
-}
-function downloadCSV(records) {
-  const blob = new Blob([toCSV(records)], { type:"text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download=`nippo_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+function emptyBatch() { return { name:"", qty:"", start:"", end:"", notes:"" }; }
+function emptyForm()  {
+  return { author:"", date:"",
+    batch1:emptyBatch(), batch2:emptyBatch(), batch3:emptyBatch(),
+    semiProduct:"", otherNotes:"" };
 }
 
-// テンプレートCSVダウンロード（ヘッダーと記入例1行）
-function downloadTemplate() {
-  const example = [
-    "2026-04-22","山田太郎","",
-    "製品A","150kg","08:00","10:00","異常なし",
-    "製品B","200kg","10:30","12:30","",
-    "","","","","",
-    "","",
-  ];
-  const row = example.map(v => `"${v}"`).join(",");
-  const csv = "\uFEFF" + CSV_HEADERS.join(",") + "\n" + row;
-  const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+// ─── GitHub API ───────────────────────────────────────────────
+function getToken() { return localStorage.getItem("gh_token") || ""; }
+
+function toBase64(str) {
+  var bytes = new TextEncoder().encode(str);
+  var bin = "";
+  bytes.forEach(function(b){ bin += String.fromCharCode(b); });
+  return btoa(bin);
+}
+
+function ghRequest(url, method, body) {
+  method = method || "GET";
+  var opts = {
+    method: method,
+    headers: {
+      "Authorization": "token " + getToken(),
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  };
+  if (body) {
+    opts.headers["Content-Type"] = "application/json";
+    opts.body = JSON.stringify(body);
+  }
+  return fetch(url, opts).then(function(res) {
+    return res.json().catch(function(){ return {}; }).then(function(data) {
+      if (!res.ok) {
+        var msg = data.message || res.statusText;
+        if (res.status === 401) msg = "Token認証失敗(401)：Tokenを確認してください";
+        if (res.status === 403) msg = "権限不足(403)：TokenのContents権限をRead and writeにしてください";
+        if (res.status === 404) msg = "リポジトリが見つかりません(404)：リポジトリ名を確認してください";
+        throw new Error(msg);
+      }
+      return data;
+    });
+  });
+}
+
+function ghTest() {
+  return ghRequest("https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO);
+}
+
+function ghLoad() {
+  return ghRequest(
+    "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/reports?ref=" + GH_BRANCH
+  ).then(function(files) {
+    if (!Array.isArray(files)) return [];
+    var jsonFiles = files.filter(function(f){ return f.name.endsWith(".json"); });
+    return Promise.all(jsonFiles.map(function(f) {
+      return fetch(f.download_url, { headers:{ "Authorization":"token " + getToken() } })
+        .then(function(r){ return r.json(); })
+        .catch(function(){ return null; });
+    })).then(function(records) {
+      return records.filter(Boolean).sort(function(a,b){
+        return (b.date||"").localeCompare(a.date||"");
+      });
+    });
+  }).catch(function(e) {
+    if (e.message && e.message.includes("404")) return [];
+    throw e;
+  });
+}
+
+function ghSave(record) {
+  var date = record.date || new Date().toISOString().slice(0,10);
+  var path = "reports/" + date + "_" + record.id + ".json";
+  var url  = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + path;
+  var content = toBase64(JSON.stringify(record, null, 2));
+  return ghRequest(url).then(function(ex) {
+    return ghRequest(url, "PUT", {
+      message: "日報: " + date + " (" + (record.author||"不明") + ")",
+      content: content, branch: GH_BRANCH, sha: ex.sha
+    });
+  }).catch(function(e) {
+    if (e.message && e.message.includes("404")) {
+      return ghRequest(url, "PUT", {
+        message: "日報: " + date + " (" + (record.author||"不明") + ")",
+        content: content, branch: GH_BRANCH
+      });
+    }
+    throw e;
+  });
+}
+
+function ghDelete(record) {
+  var date = record.date || "unknown";
+  var path = "reports/" + date + "_" + record.id + ".json";
+  var url  = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + path;
+  return ghRequest(url).then(function(ex) {
+    return ghRequest(url, "DELETE", {
+      message: "日報削除: " + date, sha: ex.sha, branch: GH_BRANCH
+    });
+  });
+}
+
+// ─── CSV ──────────────────────────────────────────────────────
+function toCSV(records) {
+  var rows = records.map(function(r) {
+    return [r.date, r.author, r.savedAt,
+      r.batch1.name, r.batch1.qty, r.batch1.start, r.batch1.end, r.batch1.notes,
+      r.batch2.name, r.batch2.qty, r.batch2.start, r.batch2.end, r.batch2.notes,
+      r.batch3.name, r.batch3.qty, r.batch3.start, r.batch3.end, r.batch3.notes,
+      r.semiProduct, r.otherNotes
+    ].map(function(v){ return '"' + (v||"").replace(/"/g,'""') + '"'; }).join(",");
+  });
+  return "\uFEFF" + CSV_HEADERS.join(",") + "\n" + rows.join("\n");
+}
+function dlCSV(records) {
+  var blob = new Blob([toCSV(records)], { type:"text/csv;charset=utf-8;" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href=url; a.download="nippo_" + new Date().toISOString().slice(0,10) + ".csv";
+  a.click(); URL.revokeObjectURL(url);
+}
+function dlTemplate() {
+  var example = '"2026-04-22","山田太郎","","製品A","150kg","08:00","10:00","異常なし","製品B","200kg","10:30","12:30","","","","","","","",""';
+  var csv = "\uFEFF" + CSV_HEADERS.join(",") + "\n" + example;
+  var blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
   a.href=url; a.download="nippo_template.csv";
   a.click(); URL.revokeObjectURL(url);
 }
-
-// CSVテキストをパース（ダブルクォート対応）
 function parseCSV(text) {
-  const lines = text.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n").filter(l=>l.trim());
+  var lines = text.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n").filter(function(l){ return l.trim(); });
   if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map(h => h.replace(/^"|"$/g,"").trim());
-  const records = [];
-  for (let i=1; i<lines.length; i++) {
-    const vals = [];
-    let cur="", inQ=false;
-    for (let c=0; c<lines[i].length; c++) {
-      const ch = lines[i][c];
+  var headers = lines[0].split(",").map(function(h){ return h.replace(/^"|"$/g,"").trim(); });
+  var records = [];
+  for (var i=1; i<lines.length; i++) {
+    var vals = [], cur = "", inQ = false;
+    for (var c=0; c<lines[i].length; c++) {
+      var ch = lines[i][c];
       if (ch==='"') { inQ=!inQ; }
       else if (ch==="," && !inQ) { vals.push(cur); cur=""; }
       else { cur+=ch; }
     }
     vals.push(cur);
-    const obj = {};
-    headers.forEach((h,idx) => { obj[h] = (vals[idx]||"").trim(); });
-    // レコードに変換
-    const record = {
+    var obj = {};
+    headers.forEach(function(h,idx){ obj[h]=(vals[idx]||"").trim(); });
+    if (!obj["製造日"]) continue;
+    records.push({
       id: Date.now().toString() + "_" + i,
       savedAt: obj["保存日時"] || new Date().toISOString(),
-      date:    obj["製造日"] || "",
-      author:  obj["記入者"] || "",
+      date:    obj["製造日"],
+      author:  obj["記入者"]||"",
       batch1:  { name:obj["１釜目_品名"]||"", qty:obj["１釜目_製造数"]||"", start:obj["１釜目_開始"]||"", end:obj["１釜目_終了"]||"", notes:obj["１釜目_備考"]||"" },
       batch2:  { name:obj["２釜目_品名"]||"", qty:obj["２釜目_製造数"]||"", start:obj["２釜目_開始"]||"", end:obj["２釜目_終了"]||"", notes:obj["２釜目_備考"]||"" },
       batch3:  { name:obj["３釜目_品名"]||"", qty:obj["３釜目_製造数"]||"", start:obj["３釜目_開始"]||"", end:obj["３釜目_終了"]||"", notes:obj["３釜目_備考"]||"" },
-      semiProduct: obj["半製品"] || "",
-      otherNotes:  obj["その他"] || "",
-    };
-    if (record.date) records.push(record); // 製造日が空の行はスキップ
+      semiProduct: obj["半製品"]||"",
+      otherNotes:  obj["その他"]||""
+    });
   }
   return records;
 }
 
-// ─── Root ─────────────────────────────────────────────────────
-function App() {
-  const [token, setToken]   = useState(localStorage.getItem("gh_token")||"");
-  const [authed, setAuthed] = useState(false);
-  const [mode, setMode]     = useState("input");
-
-  useEffect(() => { if (token) localStorage.setItem("gh_token", token); }, [token]);
-
-  if (!authed || !token) return (
-    <LoginPage token={token} setToken={setToken} onLogin={() => setAuthed(true)} />
-  );
-
-  return (
-    <div>
-      <div className="no-print" style={tab.bar}>
-        <div style={tab.logo}>📋 製造日報システム</div>
-        <button style={{...tab.btn,...(mode==="input"?tab.active:{})}} onClick={()=>setMode("input")}>✏️ 日報入力</button>
-        <button style={{...tab.btn,...(mode==="admin"?tab.active:{})}} onClick={()=>setMode("admin")}>🗂️ 管理画面</button>
-        <button style={tab.logout} onClick={()=>{localStorage.removeItem("gh_token");setToken("");setAuthed(false);}}>🔓 ログアウト</button>
-      </div>
-      {mode==="input" ? <InputApp /> : <AdminApp />}
-    </div>
-  );
-}
-
-// ─── Login Page ───────────────────────────────────────────────
-function LoginPage({ token, setToken, onLogin }) {
-  const [testing, setTesting] = useState(false);
-  const [msg, setMsg]         = useState("");
-
-  const handleLogin = async () => {
-    if (!token) { setMsg("err:Tokenを入力してください"); return; }
-    setTesting(true); setMsg("");
-    try {
-      const data = await ghTestConnection();
-      setMsg(`ok:接続成功！「${data.full_name}」に接続しました ✅`);
-      setTimeout(() => onLogin(), 800);
-    } catch(e) { setMsg(`err:${e.message}`); }
-    setTesting(false);
-  };
-
-  return (
-    <div style={{minHeight:"100vh",background:A_WARM,display:"flex",alignItems:"center",justifyContent:"center"}}>
-      <div style={{width:"100%",maxWidth:440,padding:"0 16px"}}>
-        <div style={{textAlign:"center",marginBottom:28}}>
-          <div style={{fontSize:48,marginBottom:8}}>📋</div>
-          <h1 style={{fontSize:22,color:A_DARK,fontWeight:700}}>製造日報システム</h1>
-          <p style={{color:A_MID,fontSize:13,marginTop:6}}>GitHub Token を入力してログインしてください</p>
-        </div>
-        <div style={{background:"#fffdf5",border:`1px solid #d8c89a`,borderRadius:6,padding:24,boxShadow:"2px 2px 0 #d8c89a"}}>
-          <div style={{background:"#e8f0fe",border:"1px solid #90b4f5",borderRadius:4,padding:"10px 14px",fontSize:12,color:"#1a3a6e",lineHeight:1.8,marginBottom:16}}>
-            <b>接続先リポジトリ：</b><br/>
-            github.com/<b>{GH_OWNER}</b>/<b>{GH_REPO}</b>
-          </div>
-          <label style={{display:"block",fontSize:11,color:A_MID,letterSpacing:"0.08em",marginBottom:6}}>Personal Access Token</label>
-          <input
-            type="password"
-            style={{width:"100%",padding:"10px 12px",border:`1px solid #c8b47a`,borderRadius:4,fontSize:14,outline:"none",marginBottom:14,background:"#fffef8"}}
-            value={token}
-            onChange={e => setToken(e.target.value.trim())}
-            placeholder="github_pat_xxxxxxxxxxxx"
-            onKeyDown={e => e.key==="Enter" && handleLogin()}
-          />
-          {msg && <MsgBar msg={msg} />}
-          <button
-            style={{width:"100%",padding:"13px 0",background:A_DARK,color:A_WARM,border:"none",borderRadius:4,cursor:"pointer",fontSize:15,fontWeight:700,opacity:testing?0.7:1}}
-            onClick={handleLogin} disabled={testing}>
-            {testing ? "確認中…" : "ログイン →"}
-          </button>
-          <div style={{marginTop:14,padding:"10px 14px",background:"#f0f7f0",border:"1px solid #a5d6a7",borderRadius:4,fontSize:11,color:"#1b5e20",lineHeight:1.9}}>
-            <b>Tokenの発行方法：</b><br/>
-            GitHub → Settings → Developer settings<br/>
-            → Fine-grained tokens → Generate new token<br/>
-            → Repository access：<b>seizou-nippo</b> を選択<br/>
-            → Permissions → Contents：<b>Read and write</b>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Input App ────────────────────────────────────────────────
-function InputApp() {
-  const [page, setPage]     = useState("form");
-  const [form, setForm]     = useState(initialForm);
-  const [submitted, setSub] = useState(null);
-  const [msg, setMsg]       = useState("");
-  const [loading, setLoad]  = useState(false);
-
-  const showMsg = (m, ms=5000) => { setMsg(m); setTimeout(()=>setMsg(""),ms); };
-  const handleTop   = e => setForm(f=>({...f,[e.target.name]:e.target.value}));
-  const handleBatch = (key,field,val) => setForm(f=>({...f,[key]:{...f[key],[field]:val}}));
-
-  const handleConfirm = () => {
-    const record = {...form, savedAt:new Date().toISOString(), id:Date.now().toString()};
-    setSub(record); setPage("preview");
-  };
-
-  const handleSave = async () => {
-    setLoad(true);
-    try {
-      await ghSaveRecord(submitted);
-      showMsg("ok:GitHubに保存しました ✅　管理画面から確認できます");
-    } catch(e) { showMsg(`err:保存失敗 → ${e.message}`); }
-    setLoad(false);
-  };
-
-  if (page==="preview") return (
-    <div style={ia.root}><div style={ia.container}>
-      <IHeader title="確認・保存" sub="CONFIRM &amp; SAVE">
-        <button className="no-print" style={ia.iconBtn} onClick={()=>setPage("form")}>← 修正</button>
-      </IHeader>
-      {msg && <MsgBar msg={msg} />}
-      <div style={ia.previewMeta}>
-        <span><b>記入者：</b>{submitted.author||"―"}</span>
-        <span><b>製造日：</b>{submitted.date||"―"}</span>
-      </div>
-      {BATCH_KEYS.map((key,i)=>(
-        <div key={key} style={{...ia.card,borderLeft:`4px solid ${BATCH_COLORS[i]}`}}>
-          <div style={ia.cardHeader}><span style={{...ia.batchBadge,background:BATCH_COLORS[i]}}>{BATCH_LABELS[i]}</span></div>
-          <PvTable b={submitted[key]} />
-        </div>
-      ))}
-      <div style={ia.card}><ISHead title="半製品"/><p style={ia.pvText}>{submitted.semiProduct||"記載なし"}</p></div>
-      <div style={ia.card}><ISHead title="その他気づいた点"/><p style={ia.pvText}>{submitted.otherNotes||"記載なし"}</p></div>
-      <div className="no-print" style={ia.saveBox}>
-        <button style={{...ia.saveBtn,opacity:loading?0.6:1}} onClick={handleSave} disabled={loading}>
-          {loading ? "保存中…" : "💾 GitHubに保存する（管理画面に反映）"}
-        </button>
-      </div>
-      <div className="no-print" style={{display:"flex",gap:10,marginBottom:10}}>
-        <button style={ia.backBtn} onClick={()=>setPage("form")}>← 修正する</button>
-        <button style={ia.printBtn} onClick={()=>window.print()}>🖨️ 印刷</button>
-      </div>
-      <button className="no-print" style={ia.newBtn} onClick={()=>{setForm(initialForm);setSub(null);setPage("form");}}>＋ 新しい日報を入力する</button>
-    </div></div>
-  );
-
-  return (
-    <div style={ia.root}><div style={ia.container}>
-      <IHeader title="製造日報" sub="DAILY PRODUCTION REPORT" />
-      {msg && <MsgBar msg={msg} />}
-      <div style={ia.metaRow}>
-        <IField label="記入者" style={{flex:1}}>
-          <input style={ia.input} name="author" value={form.author} onChange={handleTop} placeholder="氏名を入力" />
-        </IField>
-        <IField label="製造日" style={{flex:1}}>
-          <input style={ia.input} type="date" name="date" value={form.date} onChange={handleTop} />
-        </IField>
-      </div>
-      {BATCH_KEYS.map((key,i)=>(
-        <IBatchCard key={key} label={BATCH_LABELS[i]} index={i} data={form[key]}
-          onChange={(f,v)=>handleBatch(key,f,v)} />
-      ))}
-      <div style={ia.card}><ISHead title="半製品"/>
-        <IField label="半製品があれば入力してください">
-          <textarea style={{...ia.input,...ia.ta}} value={form.semiProduct}
-            onChange={e=>handleTop({target:{name:"semiProduct",value:e.target.value}})}
-            placeholder="例：〇〇　200kg 保管場所：冷蔵庫" />
-        </IField>
-      </div>
-      <div style={ia.card}><ISHead title="その他"/>
-        <IField label="その他気づいた点があれば入力してください">
-          <textarea style={{...ia.input,...ia.ta}} value={form.otherNotes}
-            onChange={e=>handleTop({target:{name:"otherNotes",value:e.target.value}})}
-            placeholder="設備の異常、原材料の状況など" />
-        </IField>
-      </div>
-      <button style={ia.submitBtn} onClick={handleConfirm}>
-        <span style={{fontSize:15,fontWeight:700}}>日報を確認する</span>
-        <span style={{fontSize:18,color:A_ACCENT}}>→</span>
-      </button>
-    </div></div>
-  );
-}
-
-// ─── Admin App ────────────────────────────────────────────────
-function AdminApp() {
-  const [records, setRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [detail,  setDetail]  = useState(null);
-  const [search,  setSearch]  = useState("");
-  const [filterA, setFA]      = useState("all");
-  const [filterM, setFM]      = useState("all");
-  const [msg,     setMsg]     = useState("");
-  const [showImport, setShowImport] = useState(false);
-
-  const showMsg = (m,ms=3000) => { setMsg(m); setTimeout(()=>setMsg(""),ms); };
-
-  const refresh = async () => {
-    setLoading(true);
-    try { const data = await ghLoadRecords(); setRecords(data); }
-    catch(e) { showMsg(`err:読み込み失敗 → ${e.message}`); }
-    setLoading(false);
-  };
-
-  useEffect(()=>{ refresh(); },[]);
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("この記録を削除しますか？")) return;
-    const rec = records.find(r=>r.id===id);
-    try {
-      await ghDeleteRecord(rec);
-      setRecords(r=>r.filter(x=>x.id!==id));
-      showMsg("ok:削除しました");
-      if (detail?.id===id) setDetail(null);
-    } catch(e) { showMsg(`err:削除失敗 → ${e.message}`); }
-  };
-
-  const authors = useMemo(()=>[...new Set(records.map(r=>r.author).filter(Boolean))],[records]);
-  const months  = useMemo(()=>[...new Set(records.map(r=>(r.date||"").slice(0,7)).filter(Boolean))].sort().reverse(),[records]);
-  const filtered = useMemo(()=>records.filter(r=>{
-    const q=search.toLowerCase();
-    const ms=!q||(r.author||"").includes(q)||(r.date||"").includes(q)
-      ||BATCH_KEYS.some(k=>(r[k]?.name||"").toLowerCase().includes(q))
-      ||(r.semiProduct||"").includes(q)||(r.otherNotes||"").includes(q);
-    return ms&&(filterA==="all"||r.author===filterA)&&(filterM==="all"||(r.date||"").startsWith(filterM));
-  }),[records,search,filterA,filterM]);
-
-  const thisMonth = new Date().toISOString().slice(0,7);
-
-  const handleImportCSV = async (file) => {
-    if (!file) return;
-    const text = await file.text();
-    const parsed = parseCSV(text);
-    if (parsed.length===0) { showMsg("err:CSVにデータがありません。製造日の列を確認してください。"); return; }
-    setShowImport(false);
-    setLoading(true);
-    let success=0, fail=0;
-    for (const record of parsed) {
-      try { await ghSaveRecord(record); success++; }
-      catch(e) { fail++; console.error(e); }
-      await new Promise(r=>setTimeout(r,300)); // API制限対策
+// ─── DOM helpers ──────────────────────────────────────────────
+function el(tag, attrs, children) {
+  var e = document.createElement(tag);
+  if (attrs) Object.keys(attrs).forEach(function(k) {
+    if (k === "style" && typeof attrs[k]==="object") {
+      Object.assign(e.style, attrs[k]);
+    } else if (k.startsWith("on")) {
+      e.addEventListener(k.slice(2).toLowerCase(), attrs[k]);
+    } else if (k === "className") {
+      e.className = attrs[k];
+    } else if (k === "htmlFor") {
+      e.htmlFor = attrs[k];
+    } else {
+      e.setAttribute(k, attrs[k]);
     }
-    await refresh();
-    showMsg(fail===0 ? `ok:${success}件をインポートしました ✅` : `err:${success}件成功、${fail}件失敗しました`);
-    setLoading(false);
-  };
-
-  if (showImport) return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
-      <div style={{background:"#fff",borderRadius:8,padding:28,width:"100%",maxWidth:480,margin:"0 16px",boxShadow:"0 8px 32px rgba(0,0,0,0.2)"}}>
-        <h2 style={{margin:"0 0 6px",fontSize:18,color:M_DARK}}>📂 CSVインポート</h2>
-        <p style={{fontSize:13,color:M_MID,marginBottom:20,lineHeight:1.7}}>
-          ExcelなどでCSVを作成してアップロードすると日報を一括登録できます。<br/>
-          列の順番はテンプレートに合わせてください。
-        </p>
-        <div style={{background:M_LIGHT,border:`1px solid ${M_BORDER}`,borderRadius:4,padding:"12px 14px",fontSize:12,color:M_MID,marginBottom:16,lineHeight:1.8}}>
-          <b>必須列：</b>製造日（YYYY-MM-DD形式）、記入者<br/>
-          <b>任意列：</b>各釜の品名・製造数・開始終了時間・備考、半製品、その他<br/>
-          <b>ヒント：</b>まずテンプレートをダウンロードして記入するのが確実です
-        </div>
-        <div style={{border:`2px dashed ${M_BORDER}`,borderRadius:6,padding:"24px 0",textAlign:"center",marginBottom:16,background:M_LIGHT}}>
-          <div style={{fontSize:32,marginBottom:8}}>📄</div>
-          <div style={{fontSize:13,color:M_MID,marginBottom:12}}>CSVファイルを選択してください</div>
-          <input type="file" accept=".csv" style={{display:"none"}} id="csv-input"
-            onChange={e=>handleImportCSV(e.target.files[0])} />
-          <label htmlFor="csv-input" style={{padding:"9px 20px",background:M_ACCENT,color:"#fff",borderRadius:4,cursor:"pointer",fontSize:13,fontWeight:700}}>
-            ファイルを選択
-          </label>
-        </div>
-        <div style={{display:"flex",gap:10}}>
-          <button style={{flex:1,padding:"10px 0",background:"transparent",border:`1.5px solid ${M_BORDER}`,borderRadius:4,cursor:"pointer",fontSize:13,color:M_MID}}
-            onClick={()=>setShowImport(false)}>キャンセル</button>
-          <button style={{flex:1,padding:"10px 0",background:"#1b5e20",color:"#fff",border:"none",borderRadius:4,cursor:"pointer",fontSize:13,fontWeight:700}}
-            onClick={downloadTemplate}>📋 テンプレート取得</button>
-        </div>
-      </div>
-    </div>
-  );
-    <div style={{minHeight:"calc(100vh - 44px)",background:M_LIGHT,fontFamily:"sans-serif"}}>
-      <div className="no-print" style={{display:"flex",alignItems:"center",gap:10,padding:"12px 20px",background:"#fff",borderBottom:`1px solid ${M_BORDER}`,position:"sticky",top:44,zIndex:10}}>
-        <button style={ma.barBtn} onClick={()=>setDetail(null)}>← 一覧へ</button>
-        <span style={{fontWeight:700,color:M_DARK}}>日報詳細　{detail.date}</span>
-        <button style={ma.printBtn} onClick={()=>window.print()}>🖨️ 印刷</button>
-        <button style={ma.delBtnSm} onClick={()=>handleDelete(detail.id)}>🗑️ 削除</button>
-      </div>
-      {msg && <div style={{padding:"8px 20px"}}><MsgBar msg={msg}/></div>}
-      <div style={{maxWidth:700,margin:"0 auto",padding:"20px 16px"}}>
-        <div style={ma.dmeta}>
-          <span><b>記入者：</b>{detail.author||"―"}</span>
-          <span><b>製造日：</b>{detail.date||"―"}</span>
-          <span style={{marginLeft:"auto",fontSize:11,color:M_MID}}>保存：{new Date(detail.savedAt).toLocaleString("ja-JP")}</span>
-        </div>
-        <RecordDetail data={detail} admin />
-      </div>
-    </div>
-  );
-
-  return (
-    <div style={{display:"flex",minHeight:"calc(100vh - 44px)",fontFamily:"sans-serif",background:M_LIGHT}}>
-      <div className="no-print" style={{width:200,flexShrink:0,background:M_DARK,display:"flex",flexDirection:"column",padding:"20px 0 24px",gap:20}}>
-        <div style={{color:"#a8c4e0",fontSize:11,letterSpacing:"0.2em",textTransform:"uppercase",padding:"0 16px"}}>管理画面</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8,padding:"0 12px"}}>
-          <StatBox label="総件数" val={records.length}/>
-          <StatBox label="今月" val={records.filter(r=>(r.date||"").startsWith(thisMonth)).length}/>
-          <StatBox label="記入者数" val={authors.length}/>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:4,padding:"0 8px"}}>
-          <SideBtn icon="🔄" label="最新に更新" onClick={refresh}/>
-          <SideBtn icon="📥" label={`CSV出力(${filtered.length}件)`} onClick={()=>downloadCSV(filtered)}/>
-          <SideBtn icon="📂" label="CSVインポート" onClick={()=>setShowImport(true)}/>
-          <SideBtn icon="📋" label="テンプレート取得" onClick={downloadTemplate}/>
-        </div>
-        {msg && <div style={{padding:"0 12px"}}><MsgBar msg={msg}/></div>}
-      </div>
-      <div style={{flex:1,overflow:"auto"}}>
-        <div style={{display:"flex",alignItems:"center",gap:12,padding:"16px 20px 12px",borderBottom:`1px solid ${M_BORDER}`,background:"#fff"}}>
-          <h2 style={{margin:0,fontSize:17,fontWeight:700,color:M_DARK}}>日報一覧</h2>
-          {loading && <span style={{fontSize:12,color:M_MID,background:M_LIGHT,padding:"3px 10px",borderRadius:12}}>読み込み中…</span>}
-        </div>
-        <div style={{display:"flex",gap:8,padding:"10px 20px",background:"#fff",borderBottom:`1px solid ${M_BORDER}`,flexWrap:"wrap"}}>
-          <input style={{flex:2,minWidth:140,padding:"7px 10px",border:`1px solid ${M_BORDER}`,borderRadius:4,fontSize:13,outline:"none"}}
-            placeholder="🔍 日付・記入者・品名で検索…" value={search} onChange={e=>setSearch(e.target.value)} />
-          <select style={{flex:1,minWidth:90,padding:"7px 8px",border:`1px solid ${M_BORDER}`,borderRadius:4,fontSize:12,background:"#fff",outline:"none"}}
-            value={filterA} onChange={e=>setFA(e.target.value)}>
-            <option value="all">全記入者</option>
-            {authors.map(a=><option key={a} value={a}>{a}</option>)}
-          </select>
-          <select style={{flex:1,minWidth:90,padding:"7px 8px",border:`1px solid ${M_BORDER}`,borderRadius:4,fontSize:12,background:"#fff",outline:"none"}}
-            value={filterM} onChange={e=>setFM(e.target.value)}>
-            <option value="all">全期間</option>
-            {months.map(m=><option key={m} value={m}>{m}</option>)}
-          </select>
-        </div>
-        {filtered.length===0 ? (
-          <div style={{padding:"60px 20px",textAlign:"center",color:M_MID,fontSize:14}}>
-            {loading?"読み込み中…":records.length===0?"まだ日報が保存されていません。「日報入力」タブから入力してください。":"条件に合う記録がありません"}
-          </div>
-        ) : (
-          <div style={{padding:"14px 20px",overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-              <thead>
-                <tr style={{background:M_ACCENT}}>
-                  {["製造日","記入者","１釜目","２釜目","３釜目","半製品","その他",""].map(h=>(
-                    <th key={h} style={{padding:"9px 10px",color:"#fff",fontWeight:700,textAlign:"left",fontSize:11,whiteSpace:"nowrap"}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((r,idx)=>(
-                  <tr key={r.id} style={{cursor:"pointer",background:idx%2===0?"#fff":M_LIGHT}} onClick={()=>setDetail(r)}>
-                    <td style={ma.td}><b>{r.date||"―"}</b></td>
-                    <td style={ma.td}>{r.author||"―"}</td>
-                    {BATCH_KEYS.map((key,i)=>(
-                      <td key={key} style={ma.td}>
-                        {r[key]?.name
-                          ? <><span style={{display:"inline-block",width:7,height:7,borderRadius:"50%",marginRight:4,background:BATCH_COLORS[i]}}/>{r[key].name}<br/><span style={{fontSize:11,color:M_MID}}>{r[key].qty}</span></>
-                          : <span style={{color:"#bbb"}}>―</span>}
-                      </td>
-                    ))}
-                    <td style={{...ma.td,maxWidth:100,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:12,color:M_MID}}>{r.semiProduct||"―"}</td>
-                    <td style={{...ma.td,maxWidth:100,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontSize:12,color:M_MID}}>{r.otherNotes||"―"}</td>
-                    <td style={{...ma.td,whiteSpace:"nowrap"}} onClick={e=>e.stopPropagation()}>
-                      <button style={ma.viewBtn} onClick={()=>setDetail(r)}>詳細</button>
-                      <button style={ma.delBtn} onClick={()=>handleDelete(r.id)}>削除</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  });
+  if (children) {
+    (Array.isArray(children) ? children : [children]).forEach(function(c) {
+      if (c == null) return;
+      e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+  }
+  return e;
 }
 
-// ─── 共通コンポーネント ───────────────────────────────────────
-function RecordDetail({ data, admin }) {
-  const c = admin ? M_MID : A_MID;
-  const cardSt = admin
-    ? {background:"#fff",border:`1px solid ${M_BORDER}`,borderRadius:4,padding:"14px 18px",marginBottom:12}
-    : {...ia.card};
-  return (
-    <>
-      {BATCH_KEYS.map((key,i)=>{
-        const b = data[key];
-        return (
-          <div key={key} style={{...cardSt,borderLeft:`4px solid ${BATCH_COLORS[i]}`}}>
-            <div style={{marginBottom:10}}>
-              <span style={{background:BATCH_COLORS[i],color:"#fff",fontSize:12,fontWeight:700,padding:"3px 12px",borderRadius:2}}>{BATCH_LABELS[i]}</span>
-            </div>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:14}}><tbody>
-              {[["品名",b.name],["製造数",b.qty],["開始時間",b.start],["終了時間",b.end],["気が付いた点",b.notes]].map(([l,v])=>(
-                <tr key={l}>
-                  <td style={{padding:"4px 10px 4px 0",color:c,fontWeight:700,fontSize:12,width:100,verticalAlign:"top"}}>{l}</td>
-                  <td style={{padding:"4px 0",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{v||"―"}</td>
-                </tr>
-              ))}
-            </tbody></table>
-          </div>
-        );
-      })}
-      <div style={cardSt}><div style={{fontWeight:700,color:c,fontSize:12,marginBottom:6}}>▸ 半製品</div><p style={{margin:0,lineHeight:1.7}}>{data.semiProduct||"記載なし"}</p></div>
-      <div style={cardSt}><div style={{fontWeight:700,color:c,fontSize:12,marginBottom:6}}>▸ その他気づいた点</div><p style={{margin:0,lineHeight:1.7}}>{data.otherNotes||"記載なし"}</p></div>
-    </>
-  );
+function showMsg(container, text, isOk, ms) {
+  var d = el("div", { className: isOk ? "msg-ok" : "msg-err" }, text);
+  container.insertBefore(d, container.firstChild);
+  setTimeout(function(){ if (d.parentNode) d.parentNode.removeChild(d); }, ms||5000);
 }
 
-function IHeader({ title, sub, children }) {
-  return (
-    <div style={ia.header}>
-      <div style={ia.headerAccent}/>
-      <div style={{flex:1}}>
-        <div style={ia.headerLabel}>{sub}</div>
-        <h1 style={ia.title}>{title}</h1>
-      </div>
-      {children}
-    </div>
-  );
-}
-function IBatchCard({ label, index, data, onChange }) {
-  return (
-    <div style={{...ia.card,borderLeft:`4px solid ${BATCH_COLORS[index]}`}}>
-      <div style={ia.cardHeader}><span style={{...ia.batchBadge,background:BATCH_COLORS[index]}}>{label}</span></div>
-      <div style={ia.gridTwo}>
-        <IField label="品名"><input style={ia.input} value={data.name} onChange={e=>onChange("name",e.target.value)} placeholder="製品名"/></IField>
-        <IField label="製造数"><input style={ia.input} value={data.qty} onChange={e=>onChange("qty",e.target.value)} placeholder="例：150kg"/></IField>
-        <IField label="開始時間"><input style={ia.input} type="time" value={data.start} onChange={e=>onChange("start",e.target.value)}/></IField>
-        <IField label="終了時間"><input style={ia.input} type="time" value={data.end} onChange={e=>onChange("end",e.target.value)}/></IField>
-      </div>
-      <IField label="製造時、気が付いた点">
-        <textarea style={{...ia.input,...ia.ta}} value={data.notes} onChange={e=>onChange("notes",e.target.value)} placeholder="温度異常、異臭、設備不具合など"/>
-      </IField>
-    </div>
-  );
-}
-function ISHead({ title }) {
-  return <div style={ia.cardHeader}><span style={{color:A_ACCENT,fontSize:14}}>▸</span><span style={{fontSize:14,fontWeight:700,color:A_DARK}}>{title}</span></div>;
-}
-function IField({ label, children, style }) {
-  return <div style={{marginBottom:12,...style}}><label style={ia.label}>{label}</label>{children}</div>;
-}
-function PvTable({ b }) {
-  return (
-    <table style={ia.pvTable}><tbody>
-      {[["品名",b.name],["製造数",b.qty],["開始時間",b.start],["終了時間",b.end],["気が付いた点",b.notes]].map(([l,v])=>(
-        <tr key={l}><td style={ia.tdLabel}>{l}</td><td style={ia.tdVal}>{v||"―"}</td></tr>
-      ))}
-    </tbody></table>
-  );
-}
-function StatBox({ label, val }) {
-  return (
-    <div style={{background:"#1e3a5f",borderRadius:6,padding:"10px 12px"}}>
-      <div style={{fontSize:22,fontWeight:700,color:"#fff"}}>{val}</div>
-      <div style={{fontSize:10,color:M_MID,letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</div>
-    </div>
-  );
-}
-function SideBtn({ icon, label, onClick }) {
-  return (
-    <button style={{display:"flex",alignItems:"center",gap:8,padding:"9px 10px",background:"transparent",border:"none",color:"#a8c4e0",cursor:"pointer",fontSize:12,fontFamily:"inherit",borderRadius:4,textAlign:"left",width:"100%"}} onClick={onClick}>{icon} {label}</button>
-  );
-}
-function MsgBar({ msg }) {
-  const isOk = msg.startsWith("ok:");
-  const text = msg.replace(/^[a-z]+:/,"");
-  return (
-    <div style={{padding:"9px 14px",borderRadius:4,border:"1.5px solid",fontSize:13,marginBottom:12,
-      background:isOk?"#e8f5e9":"#fdecea",borderColor:isOk?"#81c784":"#e57373",
-      color:isOk?"#2e7d32":"#c62828",fontWeight:700,lineHeight:1.5}}>{text}</div>
-  );
-}
-
-const tab = {
-  bar:    {display:"flex",alignItems:"center",background:"#1A1208",padding:"0 16px",gap:4,position:"sticky",top:0,zIndex:100},
-  logo:   {color:"#d8c89a",fontSize:13,fontWeight:700,marginRight:"auto",padding:"12px 0"},
-  btn:    {padding:"12px 16px",background:"transparent",border:"none",color:"#8B6A3E",cursor:"pointer",fontSize:13,fontFamily:"inherit",borderBottom:"3px solid transparent"},
-  active: {color:"#F5EDD6",borderBottom:"3px solid #D4622A"},
-  logout: {padding:"8px 12px",background:"transparent",border:"1px solid #8B6A3E",color:"#8B6A3E",cursor:"pointer",fontSize:11,borderRadius:3,fontFamily:"inherit"},
-};
-const ia = {
-  root:        {minHeight:"calc(100vh - 44px)",background:A_WARM,paddingBottom:48},
-  container:   {maxWidth:680,margin:"0 auto",padding:"0 16px"},
-  header:      {display:"flex",alignItems:"center",gap:12,padding:"22px 0 14px",borderBottom:`2px solid ${A_DARK}`,marginBottom:18},
-  headerAccent:{width:6,height:46,background:A_ACCENT,borderRadius:2,flexShrink:0},
-  headerLabel: {fontSize:10,letterSpacing:"0.25em",color:A_MID,textTransform:"uppercase",marginBottom:2},
-  title:       {margin:0,fontSize:20,fontWeight:700,color:A_DARK},
-  iconBtn:     {padding:"6px 12px",background:"#fffdf5",border:`1.5px solid #c8b47a`,borderRadius:3,cursor:"pointer",fontSize:12,color:A_DARK},
-  metaRow:     {display:"flex",gap:16,marginBottom:8},
-  card:        {background:"#fffdf5",border:`1px solid #d8c89a`,borderLeft:`4px solid ${A_MID}`,borderRadius:4,padding:"14px 18px",marginBottom:12,boxShadow:"2px 2px 0 #d8c89a"},
-  cardHeader:  {display:"flex",alignItems:"center",gap:10,marginBottom:10},
-  batchBadge:  {color:"#fff",fontSize:12,fontWeight:700,padding:"3px 12px",borderRadius:2},
-  gridTwo:     {display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 16px"},
-  label:       {display:"block",fontSize:11,color:A_MID,letterSpacing:"0.08em",marginBottom:4},
-  input:       {width:"100%",padding:"8px 10px",border:`1px solid #c8b47a`,borderRadius:3,background:"#fffef8",fontSize:14,color:A_DARK,outline:"none"},
-  ta:          {minHeight:64,resize:"vertical",lineHeight:1.6},
-  submitBtn:   {display:"flex",alignItems:"center",justifyContent:"center",gap:12,width:"100%",padding:"13px 0",background:A_DARK,color:A_WARM,border:"none",borderRadius:3,cursor:"pointer"},
-  previewMeta: {display:"flex",gap:16,flexWrap:"wrap",fontSize:14,color:A_DARK,background:"#fffdf5",border:`1px solid #d8c89a`,borderRadius:3,padding:"10px 14px",marginBottom:12},
-  pvTable:     {width:"100%",borderCollapse:"collapse",fontSize:14},
-  tdLabel:     {padding:"4px 10px 4px 0",color:A_MID,fontWeight:700,fontSize:12,width:100,verticalAlign:"top"},
-  tdVal:       {padding:"4px 0",color:A_DARK,lineHeight:1.6,whiteSpace:"pre-wrap"},
-  pvText:      {margin:0,fontSize:14,color:A_DARK,lineHeight:1.7,whiteSpace:"pre-wrap"},
-  saveBox:     {background:A_DARK,borderRadius:4,padding:16,marginBottom:12},
-  saveBtn:     {display:"block",width:"100%",padding:"13px 0",background:"#1E5631",color:"#fff",border:"none",borderRadius:3,cursor:"pointer",fontSize:14,fontWeight:700},
-  backBtn:     {flex:1,padding:"11px 0",background:"transparent",color:A_DARK,border:`2px solid ${A_DARK}`,borderRadius:3,cursor:"pointer",fontSize:13},
-  printBtn:    {flex:1,padding:"11px 0",background:A_ACCENT,color:"#fff",border:"none",borderRadius:3,cursor:"pointer",fontSize:13,fontWeight:700},
-  newBtn:      {display:"block",width:"100%",padding:"11px 0",background:"transparent",color:A_MID,border:`1.5px dashed ${A_MID}`,borderRadius:3,cursor:"pointer",fontSize:13,textAlign:"center"},
-};
-const ma = {
-  td:      {padding:"9px 10px",borderBottom:`1px solid ${M_BORDER}`,verticalAlign:"top"},
-  viewBtn: {padding:"3px 8px",background:M_ACCENT,color:"#fff",border:"none",borderRadius:3,cursor:"pointer",fontSize:11,marginRight:4},
-  delBtn:  {padding:"3px 8px",background:"#c62828",color:"#fff",border:"none",borderRadius:3,cursor:"pointer",fontSize:11},
-  barBtn:  {padding:"6px 12px",background:"transparent",border:`1.5px solid ${M_ACCENT}`,borderRadius:3,cursor:"pointer",fontSize:12,color:M_ACCENT},
-  printBtn:{padding:"6px 12px",background:M_ACCENT,color:"#fff",border:"none",borderRadius:3,cursor:"pointer",fontSize:12,marginLeft:"auto"},
-  delBtnSm:{padding:"6px 12px",background:"#fdecea",border:"1px solid #e57373",borderRadius:3,cursor:"pointer",fontSize:12,color:"#c62828"},
-  dmeta:   {display:"flex",gap:16,flexWrap:"wrap",fontSize:14,background:"#fff",border:`1px solid ${M_BORDER}`,borderRadius:4,padding:"10px 14px",marginBottom:14},
+// ─── State ────────────────────────────────────────────────────
+var state = {
+  token: localStorage.getItem("gh_token") || "",
+  page: "login", // login | main
+  mode: "input", // input | admin
+  form: emptyForm(),
+  formPage: "form", // form | preview
+  submittedRecord: null,
+  records: [],
+  detail: null,
+  search: "",
+  filterAuthor: "all",
+  filterMonth: "all",
+  showImport: false,
+  loading: false,
 };
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+function render() {
+  var app = document.getElementById("app");
+  app.innerHTML = "";
+  if (state.page === "login") { app.appendChild(buildLogin()); return; }
+  if (state.showImport) { app.appendChild(buildImportModal()); }
+  var wrapper = el("div");
+  wrapper.appendChild(buildTabBar());
+  if (state.mode === "input") {
+    if (state.formPage === "preview") wrapper.appendChild(buildPreview());
+    else wrapper.appendChild(buildForm());
+  } else {
+    if (state.detail) wrapper.appendChild(buildDetail());
+    else wrapper.appendChild(buildAdmin());
+  }
+  app.appendChild(wrapper);
+}
+
+// ─── Login ────────────────────────────────────────────────────
+function buildLogin() {
+  var msgArea = el("div");
+  var tokenInput = el("input", {
+    className:"login-input", type:"password",
+    placeholder:"github_pat_xxxxxxxxxxxx"
+  });
+  tokenInput.value = state.token;
+  tokenInput.addEventListener("input", function(){ state.token = this.value.trim(); });
+
+  var btn = el("button", { className:"login-btn" }, "ログイン →");
+  btn.addEventListener("click", function() {
+    if (!state.token) { showMsg(msgArea, "Tokenを入力してください", false); return; }
+    btn.textContent = "確認中…"; btn.disabled = true;
+    localStorage.setItem("gh_token", state.token);
+    ghTest().then(function(data) {
+      showMsg(msgArea, "接続成功！「" + data.full_name + "」に接続しました ✅", true);
+      setTimeout(function() {
+        state.page = "main";
+        render();
+      }, 800);
+    }).catch(function(e) {
+      showMsg(msgArea, e.message, false);
+      btn.textContent = "ログイン →"; btn.disabled = false;
+    });
+  });
+  tokenInput.addEventListener("keydown", function(e){ if(e.key==="Enter") btn.click(); });
+
+  return el("div", { className:"login-root" }, [
+    el("div", { className:"login-box" }, [
+      el("div", { className:"login-icon" }, "📋"),
+      el("h1", { className:"login-title" }, "製造日報システム"),
+      el("p", { className:"login-desc" }, "GitHub Token を入力してログインしてください"),
+      el("div", { className:"login-card" }, [
+        el("div", { className:"login-repo-info" }, [
+          el("b", null, "接続先："), document.createTextNode(" github.com/" + GH_OWNER + "/" + GH_REPO)
+        ]),
+        el("label", { className:"login-label" }, "Personal Access Token"),
+        tokenInput, msgArea, btn,
+        el("div", { className:"login-guide" }, [
+          el("b", null, "Tokenの発行方法："),
+          el("br"), document.createTextNode("GitHub → Settings → Developer settings"),
+          el("br"), document.createTextNode("→ Fine-grained tokens → Generate new token"),
+          el("br"), document.createTextNode("→ Repository access：seizou-nippo を選択"),
+          el("br"), document.createTextNode("→ Permissions → Contents：Read and write")
+        ])
+      ])
+    ])
+  ]);
+}
+
+// ─── Tab Bar ──────────────────────────────────────────────────
+function buildTabBar() {
+  var inputBtn = el("button", { className:"tab-btn" + (state.mode==="input"?" active":"") }, "✏️ 日報入力");
+  var adminBtn = el("button", { className:"tab-btn" + (state.mode==="admin"?" active":"") }, "🗂️ 管理画面");
+  var logoutBtn = el("button", { className:"tab-logout no-print" }, "🔓 ログアウト");
+  inputBtn.addEventListener("click", function(){ state.mode="input"; state.formPage="form"; render(); });
+  adminBtn.addEventListener("click", function(){ state.mode="admin"; state.detail=null; render(); if(state.records.length===0) loadRecords(); });
+  logoutBtn.addEventListener("click", function(){ localStorage.removeItem("gh_token"); state.token=""; state.page="login"; render(); });
+  return el("div", { className:"tab-bar no-print" }, [
+    el("div", { className:"tab-logo" }, "📋 製造日報システム"),
+    inputBtn, adminBtn, logoutBtn
+  ]);
+}
+
+// ─── Form ─────────────────────────────────────────────────────
+function buildForm() {
+  var f = state.form;
+  var msgArea = el("div");
+
+  function inputEl(name, type, val, onChange) {
+    var i = el("input", { className:"i-input", type:type||"text" });
+    i.value = val;
+    i.addEventListener("input", onChange);
+    return i;
+  }
+  function fieldEl(label, child) {
+    return el("div", { className:"i-field" }, [
+      el("label", null, label), child
+    ]);
+  }
+  function batchCard(key, label, color) {
+    var b = f[key];
+    function upd(field){ return function(e){ state.form[key][field]=e.target.value; }; }
+    var nameI  = inputEl("","text",b.name,  upd("name"));  nameI.placeholder="製品名";
+    var qtyI   = inputEl("","text",b.qty,   upd("qty"));   qtyI.placeholder="例：150kg";
+    var startI = inputEl("","time",b.start, upd("start"));
+    var endI   = inputEl("","time",b.end,   upd("end"));
+    var notesT = el("textarea", { className:"i-input i-textarea" }); notesT.value=b.notes; notesT.placeholder="温度異常、異臭など"; notesT.addEventListener("input",upd("notes"));
+    var card = el("div", { className:"i-card", style:{ borderLeft:"4px solid "+color } }, [
+      el("div", { className:"i-card-header" }, [
+        el("span", { className:"i-batch-badge", style:{ background:color } }, label)
+      ]),
+      el("div", { className:"i-grid2" }, [
+        fieldEl("品名", nameI), fieldEl("製造数", qtyI),
+        fieldEl("開始時間", startI), fieldEl("終了時間", endI)
+      ]),
+      fieldEl("製造時、気が付いた点", notesT)
+    ]);
+    return card;
+  }
+
+  var authorI = inputEl("author","text",f.author,function(e){ state.form.author=e.target.value; }); authorI.placeholder="氏名を入力";
+  var dateI   = inputEl("date","date",f.date,function(e){ state.form.date=e.target.value; });
+  var semiT   = el("textarea",{className:"i-input i-textarea"}); semiT.value=f.semiProduct; semiT.placeholder="例：〇〇 200kg 保管場所：冷蔵庫"; semiT.addEventListener("input",function(e){ state.form.semiProduct=e.target.value; });
+  var otherT  = el("textarea",{className:"i-input i-textarea"}); otherT.value=f.otherNotes; otherT.placeholder="設備の異常、原材料の状況など"; otherT.addEventListener("input",function(e){ state.form.otherNotes=e.target.value; });
+
+  var submitBtn = el("button",{className:"i-submit-btn"},[
+    el("span",{className:"i-submit-text"},"日報を確認する"),
+    el("span",{className:"i-submit-arrow"},"→")
+  ]);
+  submitBtn.addEventListener("click", function() {
+    var record = JSON.parse(JSON.stringify(state.form));
+    record.savedAt = new Date().toISOString();
+    record.id = Date.now().toString();
+    state.submittedRecord = record;
+    state.formPage = "preview";
+    render();
+  });
+
+  return el("div",{className:"i-root"},[
+    el("div",{className:"i-container"},[
+      el("div",{className:"i-header"},[
+        el("div",{className:"i-accent"}),
+        el("div",null,[
+          el("div",{className:"i-header-label"},"DAILY PRODUCTION REPORT"),
+          el("h1",{className:"i-title"},"製造日報")
+        ])
+      ]),
+      msgArea,
+      el("div",{className:"i-meta-row"},[
+        el("div",{className:"i-field",style:{flex:"1"}},[el("label",null,"記入者"),authorI]),
+        el("div",{className:"i-field",style:{flex:"1"}},[el("label",null,"製造日"),dateI])
+      ]),
+      batchCard("batch1","１釜目","#C0392B"),
+      batchCard("batch2","２釜目","#1F618D"),
+      batchCard("batch3","３釜目","#1E8449"),
+      el("div",{className:"i-card"},[
+        el("div",{className:"i-card-header"},[el("span",{className:"i-shead"},"▸"),el("span",{className:"i-shead-title"},"半製品")]),
+        el("div",{className:"i-field"},[el("label",null,"半製品があれば入力してください"),semiT])
+      ]),
+      el("div",{className:"i-card"},[
+        el("div",{className:"i-card-header"},[el("span",{className:"i-shead"},"▸"),el("span",{className:"i-shead-title"},"その他")]),
+        el("div",{className:"i-field"},[el("label",null,"その他気づいた点があれば入力してください"),otherT])
+      ]),
+      submitBtn
+    ])
+  ]);
+}
+
+// ─── Preview ──────────────────────────────────────────────────
+function buildPreview() {
+  var r = state.submittedRecord;
+  var msgArea = el("div");
+
+  function pvRow(label, val) {
+    return el("tr",null,[
+      el("td",{className:"i-pv-td-label"},label),
+      el("td",{className:"i-pv-td-val"},val||"―")
+    ]);
+  }
+  function batchSection(key, label, color) {
+    var b = r[key];
+    return el("div",{className:"i-card",style:{borderLeft:"4px solid "+color}},[
+      el("div",{className:"i-card-header"},[el("span",{className:"i-batch-badge",style:{background:color}},label)]),
+      el("table",{className:"i-pv-table"},[el("tbody",null,[
+        pvRow("品名",b.name), pvRow("製造数",b.qty),
+        pvRow("開始時間",b.start), pvRow("終了時間",b.end),
+        pvRow("気が付いた点",b.notes)
+      ])])
+    ]);
+  }
+
+  var saveBtn = el("button",{className:"i-save-btn"},"💾 GitHubに保存する（管理画面に反映）");
+  saveBtn.addEventListener("click", function() {
+    saveBtn.textContent="保存中…"; saveBtn.disabled=true;
+    ghSave(r).then(function() {
+      showMsg(msgArea,"GitHubに保存しました ✅　管理画面から確認できます",true);
+      saveBtn.textContent="💾 GitHubに保存する（管理画面に反映）"; saveBtn.disabled=false;
+    }).catch(function(e) {
+      showMsg(msgArea,"保存失敗 → "+e.message,false);
+      saveBtn.textContent="💾 GitHubに保存する（管理画面に反映）"; saveBtn.disabled=false;
+    });
+  });
+
+  var backBtn = el("button",{className:"i-back-btn"},"← 修正する");
+  backBtn.addEventListener("click",function(){ state.formPage="form"; render(); });
+  var printBtn = el("button",{className:"i-print-btn"},"🖨️ 印刷");
+  printBtn.addEventListener("click",function(){ window.print(); });
+  var newBtn = el("button",{className:"i-new-btn"},"＋ 新しい日報を入力する");
+  newBtn.addEventListener("click",function(){ state.form=emptyForm(); state.formPage="form"; state.submittedRecord=null; render(); });
+
+  return el("div",{className:"i-root"},[el("div",{className:"i-container"},[
+    el("div",{className:"i-header"},[
+      el("div",{className:"i-accent"}),
+      el("div",null,[
+        el("div",{className:"i-header-label"},"CONFIRM & SAVE"),
+        el("h1",{className:"i-title"},"確認・保存")
+      ]),
+      el("button",{className:"i-icon-btn no-print",onclick:function(){ state.formPage="form"; render(); }},"← 修正")
+    ]),
+    msgArea,
+    el("div",{className:"i-preview-meta"},[
+      el("span",null,[el("b",null,"記入者："),document.createTextNode(r.author||"―")]),
+      el("span",null,[el("b",null,"製造日："),document.createTextNode(r.date||"―")])
+    ]),
+    batchSection("batch1","１釜目","#C0392B"),
+    batchSection("batch2","２釜目","#1F618D"),
+    batchSection("batch3","３釜目","#1E8449"),
+    el("div",{className:"i-card"},[el("div",{className:"i-card-header"},[el("span",{className:"i-shead"},"▸"),el("span",{className:"i-shead-title"},"半製品")]),el("p",{className:"i-pv-text"},r.semiProduct||"記載なし")]),
+    el("div",{className:"i-card"},[el("div",{className:"i-card-header"},[el("span",{className:"i-shead"},"▸"),el("span",{className:"i-shead-title"},"その他気づいた点")]),el("p",{className:"i-pv-text"},r.otherNotes||"記載なし")]),
+    el("div",{className:"i-save-box no-print"},[saveBtn]),
+    el("div",{className:"no-print",style:{display:"flex",gap:"10px",marginBottom:"10px"}},[backBtn,printBtn]),
+    newBtn
+  ])]);
+}
+
+// ─── Admin ────────────────────────────────────────────────────
+function loadRecords() {
+  state.loading = true; render();
+  ghLoad().then(function(data) {
+    state.records = data; state.loading = false; render();
+  }).catch(function(e) {
+    state.loading = false; render();
+    var msgArea = document.querySelector(".m-main");
+    if (msgArea) showMsg(msgArea,"読み込み失敗 → "+e.message,false);
+  });
+}
+
+function getFiltered() {
+  var q = state.search.toLowerCase();
+  return state.records.filter(function(r) {
+    var ms = !q||(r.author||"").toLowerCase().includes(q)||(r.date||"").includes(q)
+      ||BATCH_KEYS.some(function(k){ return (r[k]&&r[k].name||"").toLowerCase().includes(q); })
+      ||(r.semiProduct||"").includes(q)||(r.otherNotes||"").includes(q);
+    return ms&&(state.filterAuthor==="all"||r.author===state.filterAuthor)
+              &&(state.filterMonth==="all"||(r.date||"").startsWith(state.filterMonth));
+  });
+}
+
+function buildAdmin() {
+  var filtered  = getFiltered();
+  var authors   = [...new Set(state.records.map(function(r){ return r.author; }).filter(Boolean))];
+  var months    = [...new Set(state.records.map(function(r){ return (r.date||"").slice(0,7); }).filter(Boolean))].sort().reverse();
+  var thisMonth = new Date().toISOString().slice(0,7);
+  var msgArea   = el("div",{style:{padding:"0 12px"}});
+
+  function statBox(label, val) {
+    return el("div",{className:"m-stat-box"},[
+      el("div",{className:"m-stat-val"},String(val)),
+      el("div",{className:"m-stat-label"},label)
+    ]);
+  }
+  function sideBtn(icon, label, cb) {
+    var b = el("button",{className:"m-side-btn"},[document.createTextNode(icon+" "+label)]);
+    b.addEventListener("click",cb); return b;
+  }
+
+  // サイドバー
+  var sidebar = el("div",{className:"m-sidebar no-print"},[
+    el("div",{className:"m-sidebar-title"},"管理画面"),
+    el("div",{style:{display:"flex",flexDirection:"column",gap:"8px",padding:"0 12px"}},[
+      statBox("総件数", state.records.length),
+      statBox("今月", state.records.filter(function(r){ return (r.date||"").startsWith(thisMonth); }).length),
+      statBox("記入者数", authors.length)
+    ]),
+    el("div",{style:{display:"flex",flexDirection:"column",gap:"4px",padding:"0 8px"}},[
+      sideBtn("🔄","最新に更新",function(){ loadRecords(); }),
+      sideBtn("📥","CSV出力("+filtered.length+"件)",function(){ dlCSV(filtered); }),
+      sideBtn("📂","CSVインポート",function(){ state.showImport=true; render(); }),
+      sideBtn("📋","テンプレート取得",function(){ dlTemplate(); })
+    ]),
+    msgArea
+  ]);
+
+  // フィルター
+  var searchI = el("input",{className:"m-search",placeholder:"🔍 日付・記入者・品名で検索…"});
+  searchI.value = state.search;
+  searchI.addEventListener("input",function(e){ state.search=e.target.value; render(); });
+
+  function makeSelect(val, opts, onChange) {
+    var s = el("select",{className:"m-select"});
+    opts.forEach(function(o){
+      var op = el("option",{value:o.v},o.t);
+      if (o.v===val) op.selected=true;
+      s.appendChild(op);
+    });
+    s.addEventListener("change",function(e){ onChange(e.target.value); render(); });
+    return s;
+  }
+  var authorOpts = [{v:"all",t:"全記入者"}].concat(authors.map(function(a){ return {v:a,t:a}; }));
+  var monthOpts  = [{v:"all",t:"全期間"}].concat(months.map(function(m){ return {v:m,t:m}; }));
+
+  // テーブル
+  var tableContent;
+  if (filtered.length===0) {
+    tableContent = el("div",{className:"m-empty"},
+      state.loading?"読み込み中…":state.records.length===0?"まだ日報が保存されていません。「日報入力」タブから入力してください。":"条件に合う記録がありません");
+  } else {
+    var thead = el("tr",{style:{background:"#1E3A5F"}});
+    ["製造日","記入者","１釜目","２釜目","３釜目","半製品","その他",""].forEach(function(h){
+      thead.appendChild(el("th",{className:"m-th"},h));
+    });
+    var tbody = el("tbody");
+    filtered.forEach(function(r,idx) {
+      var tr = el("tr",{style:{cursor:"pointer",background:idx%2===0?"#fff":"#EEF4FB"}});
+      tr.addEventListener("click",function(){ state.detail=r; render(); });
+      tr.appendChild(el("td",{className:"m-td"},[el("b",null,r.date||"―")]));
+      tr.appendChild(el("td",{className:"m-td"},r.author||"―"));
+      BATCH_KEYS.forEach(function(key,i){
+        var b = r[key];
+        var td = el("td",{className:"m-td"});
+        if (b&&b.name) {
+          td.appendChild(el("span",{className:"m-dot",style:{background:BATCH_COLORS[i]}}));
+          td.appendChild(document.createTextNode(b.name));
+          td.appendChild(el("br"));
+          td.appendChild(el("span",{className:"m-small"},b.qty||""));
+        } else {
+          td.appendChild(el("span",{style:{color:"#bbb"}},"―"));
+        }
+        tr.appendChild(td);
+      });
+      tr.appendChild(el("td",{className:"m-td-clamp"},r.semiProduct||"―"));
+      tr.appendChild(el("td",{className:"m-td-clamp"},r.otherNotes||"―"));
+      var actionTd = el("td",{className:"m-td",style:{whiteSpace:"nowrap"}});
+      actionTd.addEventListener("click",function(e){ e.stopPropagation(); });
+      var vBtn = el("button",{className:"m-view-btn"},"詳細");
+      vBtn.addEventListener("click",function(){ state.detail=r; render(); });
+      var dBtn = el("button",{className:"m-del-btn"},"削除");
+      dBtn.addEventListener("click",function(){
+        if (!confirm("この記録を削除しますか？")) return;
+        ghDelete(r).then(function(){
+          state.records = state.records.filter(function(x){ return x.id!==r.id; });
+          showMsg(msgArea,"削除しました",true,3000); render();
+        }).catch(function(e){ showMsg(msgArea,"削除失敗 → "+e.message,false); });
+      });
+      actionTd.appendChild(vBtn); actionTd.appendChild(dBtn);
+      tr.appendChild(actionTd);
+      tbody.appendChild(tr);
+    });
+    tableContent = el("div",{className:"m-table-wrap"},[
+      el("table",{className:"m-table"},[el("thead",null,[thead]),tbody])
+    ]);
+  }
+
+  var main = el("div",{className:"m-main"},[
+    el("div",{className:"m-topbar"},[
+      el("h2",{className:"m-page-title"},"日報一覧"),
+      state.loading ? el("span",{className:"m-loading-tag"},"読み込み中…") : el("span")
+    ]),
+    el("div",{className:"m-filter-row"},[
+      searchI,
+      makeSelect(state.filterAuthor, authorOpts, function(v){ state.filterAuthor=v; }),
+      makeSelect(state.filterMonth,  monthOpts,  function(v){ state.filterMonth=v; })
+    ]),
+    tableContent
+  ]);
+
+  return el("div",{className:"m-root"},[sidebar,main]);
+}
+
+// ─── Detail ───────────────────────────────────────────────────
+function buildDetail() {
+  var r = state.detail;
+  var msgArea = el("div",{style:{padding:"8px 20px"}});
+
+  function dRow(label,val) {
+    return el("tr",null,[
+      el("td",{style:{padding:"4px 10px 4px 0",color:"#5B7A99",fontWeight:"700",fontSize:"12px",width:"100px",verticalAlign:"top"}},label),
+      el("td",{style:{padding:"4px 0",lineHeight:"1.6",whiteSpace:"pre-wrap"}},val||"―")
+    ]);
+  }
+
+  var backBtn = el("button",{className:"m-bar-btn"},"← 一覧へ");
+  backBtn.addEventListener("click",function(){ state.detail=null; render(); });
+  var printBtn = el("button",{className:"m-print-btn"},"🖨️ 印刷");
+  printBtn.addEventListener("click",function(){ window.print(); });
+  var delBtn = el("button",{className:"m-del-btn-sm"},"🗑️ 削除");
+  delBtn.addEventListener("click",function(){
+    if (!confirm("この記録を削除しますか？")) return;
+    ghDelete(r).then(function(){
+      state.records=state.records.filter(function(x){ return x.id!==r.id; });
+      state.detail=null; render();
+    }).catch(function(e){ showMsg(msgArea,"削除失敗 → "+e.message,false); });
+  });
+
+  var sections = BATCH_KEYS.map(function(key,i) {
+    var b = r[key];
+    return el("div",{className:"m-dcard",style:{borderLeft:"4px solid "+BATCH_COLORS[i]}},[
+      el("span",{style:{background:BATCH_COLORS[i],color:"#fff",fontSize:"12px",fontWeight:"700",padding:"3px 12px",borderRadius:"2px"}},BATCH_LABELS[i]),
+      el("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:"14px",marginTop:"10px"}},[
+        el("tbody",null,[dRow("品名",b.name),dRow("製造数",b.qty),dRow("開始時間",b.start),dRow("終了時間",b.end),dRow("気が付いた点",b.notes)])
+      ])
+    ]);
+  });
+
+  return el("div",{style:{minHeight:"calc(100vh - 44px)",background:"#EEF4FB",fontFamily:"sans-serif"}},[
+    el("div",{className:"m-detail-bar no-print"},[
+      backBtn,
+      el("span",{style:{fontWeight:"700",color:"#0D1B2A"}},"日報詳細　"+r.date),
+      printBtn, delBtn
+    ]),
+    msgArea,
+    el("div",{className:"m-detail-body"},[
+      el("div",{className:"m-dmeta"},[
+        el("span",null,[el("b",null,"記入者："),document.createTextNode(r.author||"―")]),
+        el("span",null,[el("b",null,"製造日："),document.createTextNode(r.date||"―")]),
+        el("span",{style:{marginLeft:"auto",fontSize:"11px",color:"#5B7A99"}},"保存："+new Date(r.savedAt).toLocaleString("ja-JP"))
+      ]),
+      ...sections,
+      el("div",{className:"m-dcard"},[el("div",{style:{fontWeight:"700",color:"#5B7A99",fontSize:"12px",marginBottom:"6px"}},"▸ 半製品"),el("p",{style:{margin:"0",lineHeight:"1.7"}},r.semiProduct||"記載なし")]),
+      el("div",{className:"m-dcard"},[el("div",{style:{fontWeight:"700",color:"#5B7A99",fontSize:"12px",marginBottom:"6px"}},"▸ その他気づいた点"),el("p",{style:{margin:"0",lineHeight:"1.7"}},r.otherNotes||"記載なし")])
+    ])
+  ]);
+}
+
+// ─── Import Modal ─────────────────────────────────────────────
+function buildImportModal() {
+  var msgArea = el("div");
+  var fileInput = el("input",{type:"file",accept:".csv",style:{display:"none"},id:"csv-file-input"});
+  fileInput.addEventListener("change",function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    state.showImport = false; render();
+    var statusMsg = document.querySelector(".m-main") || document.body;
+    file.text().then(function(text) {
+      var parsed = parseCSV(text);
+      if (parsed.length===0) {
+        showMsg(statusMsg,"CSVにデータがありません。製造日の列を確認してください。",false); return;
+      }
+      state.loading=true; render();
+      var success=0, fail=0;
+      function saveNext(i) {
+        if (i>=parsed.length) {
+          state.loading=false;
+          loadRecords();
+          setTimeout(function(){
+            var m = document.querySelector(".m-main");
+            if(m) showMsg(m, fail===0?"✅ "+success+"件をインポートしました":success+"件成功、"+fail+"件失敗しました", fail===0);
+          },500);
+          return;
+        }
+        ghSave(parsed[i]).then(function(){ success++; }).catch(function(){ fail++; }).finally(function(){
+          setTimeout(function(){ saveNext(i+1); }, 400);
+        });
+      }
+      saveNext(0);
+    });
+  });
+
+  var cancelBtn = el("button",{className:"modal-cancel-btn"},"キャンセル");
+  cancelBtn.addEventListener("click",function(){ state.showImport=false; render(); });
+  var tmplBtn = el("button",{className:"modal-tmpl-btn"},"📋 テンプレート取得");
+  tmplBtn.addEventListener("click",function(){ dlTemplate(); });
+  var fileLabel = el("label",{className:"modal-file-label",htmlFor:"csv-file-input"},"ファイルを選択");
+
+  var overlay = el("div",{className:"modal-overlay"},[
+    el("div",{className:"modal-box"},[
+      el("h2",{className:"modal-title"},"📂 CSVインポート"),
+      el("p",{className:"modal-desc"},"ExcelなどでCSVを作成してアップロードすると日報を一括登録できます。"),
+      el("div",{className:"modal-info"},[
+        el("b",null,"必須列："),document.createTextNode("製造日（YYYY-MM-DD形式）、記入者"),
+        el("br"),
+        el("b",null,"任意列："),document.createTextNode("各釜の品名・製造数・開始終了時間・備考、半製品、その他"),
+        el("br"),
+        el("b",null,"ヒント："),document.createTextNode("まずテンプレートをダウンロードして記入するのが確実です")
+      ]),
+      el("div",{className:"modal-drop"},[
+        fileInput,
+        el("div",{className:"modal-drop-icon"},"📄"),
+        el("div",{className:"modal-drop-text"},"CSVファイルを選択してください"),
+        fileLabel
+      ]),
+      msgArea,
+      el("div",{className:"modal-btns"},[cancelBtn,tmplBtn])
+    ])
+  ]);
+  return overlay;
+}
+
+// ─── Start ────────────────────────────────────────────────────
+render();
 </script>
 </body>
 </html>
