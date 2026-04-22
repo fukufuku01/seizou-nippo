@@ -1,0 +1,29 @@
+{
+  "id": "1776843216507_2",
+  "savedAt": "2026-04-22T07:33:36.507Z",
+  "date": "2026-04-23",
+  "author": "鈴木花子",
+  "batch1": {
+    "name": "製品C",
+    "qty": "100kg",
+    "start": "09:00",
+    "end": "11:00",
+    "notes": ""
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "設備点検あり",
+  "otherNotes": ""
+}
