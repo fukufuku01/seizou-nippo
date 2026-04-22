@@ -1,0 +1,29 @@
+{
+  "id": "1776843427903_44",
+  "savedAt": "2026-04-22T07:37:07.903Z",
+  "date": "2026-03-07",
+  "author": "養父",
+  "batch1": {
+    "name": "ポークカレー",
+    "qty": "1005",
+    "start": "09:00",
+    "end": "13:10",
+    "notes": "とくになし"
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": ""
+}
