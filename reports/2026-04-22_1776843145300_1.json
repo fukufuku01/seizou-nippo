@@ -1,0 +1,29 @@
+{
+  "id": "1776843145300_1",
+  "savedAt": "2026-04-22T07:32:25.300Z",
+  "date": "2026-04-22",
+  "author": "山田太郎",
+  "batch1": {
+    "name": "製品A",
+    "qty": "150kg",
+    "start": "08:00",
+    "end": "10:00",
+    "notes": "異常なし"
+  },
+  "batch2": {
+    "name": "製品B",
+    "qty": "200kg",
+    "start": "10:30",
+    "end": "12:30",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": ""
+}
