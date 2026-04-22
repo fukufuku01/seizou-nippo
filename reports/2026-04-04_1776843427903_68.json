@@ -1,0 +1,29 @@
+{
+  "id": "1776843427903_68",
+  "savedAt": "2026-04-22T07:37:07.903Z",
+  "date": "2026-04-04",
+  "author": "養父",
+  "batch1": {
+    "name": "モンシェリ鶏",
+    "qty": "860",
+    "start": "09:00",
+    "end": "12:30",
+    "notes": "特になし"
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": ""
+}
