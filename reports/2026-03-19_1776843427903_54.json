@@ -1,0 +1,29 @@
+{
+  "id": "1776843427903_54",
+  "savedAt": "2026-04-22T07:37:07.903Z",
+  "date": "2026-03-19",
+  "author": "養父",
+  "batch1": {
+    "name": "唐十",
+    "qty": "1420",
+    "start": "09:00",
+    "end": "15:30",
+    "notes": "特にないです"
+  },
+  "batch2": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "notes": ""
+  },
+  "semiProduct": "野菜カレー",
+  "otherNotes": ""
+}
