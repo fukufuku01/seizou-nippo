@@ -120,12 +120,12 @@ var BATCH_LABELS = ["１釜目","２釜目","３釜目"];
 var BATCH_KEYS   = ["batch1","batch2","batch3"];
 var BATCH_COLORS = ["#C0392B","#1F618D","#1E8449"];
 var CSV_HEADERS  = ["製造日","記入者","保存日時",
-  "１釜目_品名","１釜目_製造数","１釜目_開始","１釜目_終了","１釜目_備考",
-  "２釜目_品名","２釜目_製造数","２釜目_開始","２釜目_終了","２釜目_備考",
-  "３釜目_品名","３釜目_製造数","３釜目_開始","３釜目_終了","３釜目_備考",
+  "１釜目_品名","１釜目_製造数","１釜目_開始","１釜目_終了","１釜目_上担当","１釜目_下担当","１釜目_具材担当","１釜目_シール担当","１釜目_備考",
+  "２釜目_品名","２釜目_製造数","２釜目_開始","２釜目_終了","２釜目_上担当","２釜目_下担当","２釜目_具材担当","２釜目_シール担当","２釜目_備考",
+  "３釜目_品名","３釜目_製造数","３釜目_開始","３釜目_終了","３釜目_上担当","３釜目_下担当","３釜目_具材担当","３釜目_シール担当","３釜目_備考",
   "半製品","その他"];
 
-function emptyBatch() { return { name:"", qty:"", start:"", end:"", notes:"" }; }
+function emptyBatch() { return { name:"", qty:"", start:"", end:"", upper:"", lower:"", ingredient:"", seal:"", notes:"" }; }
 function emptyForm()  {
   return { author:"", date:"",
     batch1:emptyBatch(), batch2:emptyBatch(), batch3:emptyBatch(),
@@ -234,9 +234,9 @@ function ghDelete(record) {
 function toCSV(records) {
   var rows = records.map(function(r) {
     return [r.date, r.author, r.savedAt,
-      r.batch1.name, r.batch1.qty, r.batch1.start, r.batch1.end, r.batch1.notes,
-      r.batch2.name, r.batch2.qty, r.batch2.start, r.batch2.end, r.batch2.notes,
-      r.batch3.name, r.batch3.qty, r.batch3.start, r.batch3.end, r.batch3.notes,
+      r.batch1.name, r.batch1.qty, r.batch1.start, r.batch1.end, r.batch1.upper||"", r.batch1.lower||"", r.batch1.ingredient||"", r.batch1.seal||"", r.batch1.notes,
+      r.batch2.name, r.batch2.qty, r.batch2.start, r.batch2.end, r.batch2.upper||"", r.batch2.lower||"", r.batch2.ingredient||"", r.batch2.seal||"", r.batch2.notes,
+      r.batch3.name, r.batch3.qty, r.batch3.start, r.batch3.end, r.batch3.upper||"", r.batch3.lower||"", r.batch3.ingredient||"", r.batch3.seal||"", r.batch3.notes,
       r.semiProduct, r.otherNotes
     ].map(function(v){ return '"' + (v||"").replace(/"/g,'""') + '"'; }).join(",");
   });
@@ -280,9 +280,9 @@ function parseCSV(text) {
       savedAt: obj["保存日時"] || new Date().toISOString(),
       date:    obj["製造日"],
       author:  obj["記入者"]||"",
-      batch1:  { name:obj["１釜目_品名"]||"", qty:obj["１釜目_製造数"]||"", start:obj["１釜目_開始"]||"", end:obj["１釜目_終了"]||"", notes:obj["１釜目_備考"]||"" },
-      batch2:  { name:obj["２釜目_品名"]||"", qty:obj["２釜目_製造数"]||"", start:obj["２釜目_開始"]||"", end:obj["２釜目_終了"]||"", notes:obj["２釜目_備考"]||"" },
-      batch3:  { name:obj["３釜目_品名"]||"", qty:obj["３釜目_製造数"]||"", start:obj["３釜目_開始"]||"", end:obj["３釜目_終了"]||"", notes:obj["３釜目_備考"]||"" },
+      batch1:  { name:obj["１釜目_品名"]||"", qty:obj["１釜目_製造数"]||"", start:obj["１釜目_開始"]||"", end:obj["１釜目_終了"]||"", upper:obj["１釜目_上担当"]||"", lower:obj["１釜目_下担当"]||"", ingredient:obj["１釜目_具材担当"]||"", seal:obj["１釜目_シール担当"]||"", notes:obj["１釜目_備考"]||"" },
+      batch2:  { name:obj["２釜目_品名"]||"", qty:obj["２釜目_製造数"]||"", start:obj["２釜目_開始"]||"", end:obj["２釜目_終了"]||"", upper:obj["２釜目_上担当"]||"", lower:obj["２釜目_下担当"]||"", ingredient:obj["２釜目_具材担当"]||"", seal:obj["２釜目_シール担当"]||"", notes:obj["２釜目_備考"]||"" },
+      batch3:  { name:obj["３釜目_品名"]||"", qty:obj["３釜目_製造数"]||"", start:obj["３釜目_開始"]||"", end:obj["３釜目_終了"]||"", upper:obj["３釜目_上担当"]||"", lower:obj["３釜目_下担当"]||"", ingredient:obj["３釜目_具材担当"]||"", seal:obj["３釜目_シール担当"]||"", notes:obj["３釜目_備考"]||"" },
       semiProduct: obj["半製品"]||"",
       otherNotes:  obj["その他"]||""
     });
@@ -444,6 +444,15 @@ function buildForm() {
     var startI = inputEl("","time",b.start, upd("start"));
     var endI   = inputEl("","time",b.end,   upd("end"));
     var notesT = el("textarea", { className:"i-input i-textarea" }); notesT.value=b.notes; notesT.placeholder="温度異常、異臭など"; notesT.addEventListener("input",upd("notes"));
+
+    // 担当者セクション
+    function staffInput(field) {
+      var inp = el("input",{className:"i-input",type:"text",placeholder:"氏名を入力"});
+      inp.value = b[field]||"";
+      inp.addEventListener("input",function(e){ state.form[key][field]=e.target.value; });
+      return inp;
+    }
+
     var card = el("div", { className:"i-card", style:{ borderLeft:"4px solid "+color } }, [
       el("div", { className:"i-card-header" }, [
         el("span", { className:"i-batch-badge", style:{ background:color } }, label)
@@ -451,6 +460,15 @@ function buildForm() {
       el("div", { className:"i-grid2" }, [
         fieldEl("品名", nameI), fieldEl("製造数", qtyI),
         fieldEl("開始時間", startI), fieldEl("終了時間", endI)
+      ]),
+      el("div",{style:{background:"#f8f4ec",border:"1px solid #d8c89a",borderRadius:"4px",padding:"10px 12px",marginBottom:"10px"}},[
+        el("div",{style:{fontSize:"11px",color:"#8B6A3E",letterSpacing:".08em",marginBottom:"8px",fontWeight:"700"}},"具詰充填機　担当者"),
+        el("div",{className:"i-grid2"},[
+          fieldEl("上担当者", staffInput("upper")),
+          fieldEl("下担当者", staffInput("lower")),
+          fieldEl("具材担当者", staffInput("ingredient")),
+          fieldEl("シール担当者", staffInput("seal"))
+        ])
       ]),
       fieldEl("製造時、気が付いた点", notesT)
     ]);
@@ -529,6 +547,10 @@ function buildPreview() {
       el("table",{className:"i-pv-table"},[el("tbody",null,[
         pvRow("品名",b.name), pvRow("製造数",b.qty),
         pvRow("開始時間",b.start), pvRow("終了時間",b.end),
+        pvRow("上担当者",b.upper||"―"),
+        pvRow("下担当者",b.lower||"―"),
+        pvRow("具材担当者",b.ingredient||"―"),
+        pvRow("シール担当者",b.seal||"―"),
         pvRow("気が付いた点",b.notes)
       ])])
     ]);
@@ -828,7 +850,7 @@ function buildDetail() {
     return el("div",{className:"m-dcard",style:{borderLeft:"4px solid "+BATCH_COLORS[i]}},[
       el("span",{style:{background:BATCH_COLORS[i],color:"#fff",fontSize:"12px",fontWeight:"700",padding:"3px 12px",borderRadius:"2px"}},BATCH_LABELS[i]),
       el("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:"14px",marginTop:"10px"}},[
-        el("tbody",null,[dRow("品名",b.name),dRow("製造数",b.qty),dRow("開始時間",b.start),dRow("終了時間",b.end),dRow("気が付いた点",b.notes)])
+        el("tbody",null,[dRow("品名",b.name),dRow("製造数",b.qty),dRow("開始時間",b.start),dRow("終了時間",b.end),dRow("上担当者",b.upper||"―"),dRow("下担当者",b.lower||"―"),dRow("具材担当者",b.ingredient||"―"),dRow("シール担当者",b.seal||"―"),dRow("気が付いた点",b.notes)])
       ])
     ]);
   });
