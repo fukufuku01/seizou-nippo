@@ -384,6 +384,8 @@ function buildLogin() {
     // パスワード一致 → ログイン
     state.page = "main";
     render();
+    // 管理画面用データを事前読み込み開始
+    loadRecords();
   });
   passInput.addEventListener("keydown", function(e){ if(e.key==="Enter") btn.click(); });
 
@@ -406,7 +408,7 @@ function buildTabBar() {
   var adminBtn = el("button", { className:"tab-btn" + (state.mode==="admin"?" active":"") }, "🗂️ 管理画面");
   var logoutBtn = el("button", { className:"tab-logout no-print" }, "🔓 ログアウト");
   inputBtn.addEventListener("click", function(){ state.mode="input"; state.formPage="form"; render(); });
-  adminBtn.addEventListener("click", function(){ state.mode="admin"; state.detail=null; render(); if(state.records.length===0) loadRecords(); });
+  adminBtn.addEventListener("click", function(){ state.mode="admin"; state.detail=null; render(); loadRecords(); });
   logoutBtn.addEventListener("click", function(){ state.page="login"; render(); });
   return el("div", { className:"tab-bar no-print" }, [
     el("div", { className:"tab-logo" }, "📋 製造日報システム"),
