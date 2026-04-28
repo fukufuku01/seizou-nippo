@@ -1,0 +1,47 @@
+{
+  "author": "日高",
+  "date": "",
+  "batch1": {
+    "name": "豆腐ハンバーグ",
+    "qty": "702",
+    "start": "09:00",
+    "end": "12:45",
+    "upper": "",
+    "lower": "",
+    "ingredient": "",
+    "seal": "みゆきさん",
+    "vacuum": "",
+    "machineTime": "",
+    "notes": "ハンバーグの大きさがバラバラなのである程度同じ大きさにしてもらえると助かります"
+  },
+  "batch2": {
+    "name": "西鉄　鹿肉と米",
+    "qty": "1200",
+    "start": "09:00",
+    "end": "15:30",
+    "upper": "養父",
+    "lower": "若林",
+    "ingredient": "村上",
+    "seal": "高邦",
+    "vacuum": "小川",
+    "machineTime": "02:30",
+    "notes": ""
+  },
+  "batch3": {
+    "name": "",
+    "qty": "",
+    "start": "",
+    "end": "",
+    "upper": "",
+    "lower": "",
+    "ingredient": "",
+    "seal": "",
+    "vacuum": "",
+    "machineTime": "",
+    "notes": ""
+  },
+  "semiProduct": "",
+  "otherNotes": "",
+  "savedAt": "2026-04-28T08:54:50.710Z",
+  "id": "1777366490737"
+}
